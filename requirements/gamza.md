@@ -7,12 +7,12 @@ Hello, we are team "GAMZA"
 - Leader
     - `Yun Yeyoung` :배포, 사운드 탐색, 코드 구현
 - Members
-    - `Bayasgalan` :아키텍쳐 설계, 코드 검토 및 테스트
-    - `Bolderdene` : 사운드 탐색, 코드 구현
-    - `Kim Yujin` :아키텍쳐 설계, 코드 검토 및 테스트
-    - `Kwon Gumin` :아키텍쳐 설계
-    - `Wu, Jiaqi` :사운드 탐색, 코드 구현
-    - `Hu, Tianxiang` :사운드 탐색, 코드 구현
+    - `Bayasgalan`(http://github.com/atg0dd) :아키텍쳐 설계, 코드 검토 및 테스트
+    - `Bolderdene`([http://github.com/k](https://github.com/kbboldooo) : 사운드 탐색, 코드 구현
+    - `Kim Yujin`(https://github.com/yujin041124) :아키텍쳐 설계, 코드 검토 및 테스트
+    - `Kwon Gumin`(https://github.com/rnjsrbals) :아키텍쳐 설계
+    - `Wu, Jiaqi`(https://github.com/PurpleBananass) :사운드 탐색, 코드 구현
+    - `Hu, Tianxiang`(https://github.com/HT1anX) :사운드 탐색, 코드 구현
 
 ## Team Requirements
 ### sound effect / BGM
