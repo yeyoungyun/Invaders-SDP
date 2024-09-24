@@ -1,16 +1,16 @@
 # Variety
 
 ## Team Introduction
-Hello
+We are a team of 7 members who will be working on the variety requirements for the game. Our team is composed of members from different backgrounds and experiences. We are excited to work on this project and are looking forward to contributing to the game.
 
 - Members
-    - `Jules Ollivier`
-    - `장혁헌`
-    - `Couaran Brewen`
-    - `John Young Kim`
-    - `Yoon Jae Wook`
-    - `Muhammad Akmal Hasif Bin Zamri`
-    - `Gu Leonid`
+    - `Jules Ollivier` : Team Leader
+    - `장혁헌` : _TBA_
+    - `Brewen Couaran` : _TBA_
+    - `John Young Kim` : _TBA_
+    - `Yoon Jae Wook` : _TBA_
+    - `Muhammad Akmal Hasif Bin Zamri` : _TBA_
+    - `Gu Leonid` : _TBA_
 
 ## Team Requirements
 
