@@ -8,29 +8,55 @@ Our team consists of 3 male and 4 female students. Two students have experience 
 
 Our goal is to implement a "Main Menu" that seamlessly connects to each part of the game, Space Invader, ensuring that all functionalities developed by other teams work without any malfunctions.
 
-팀의 목표는 다른 팀들이 구현한 기능들이 이상 없이 작동할 수 있도록 게임의 "메인 메뉴"를 개발하는 것입니다.
+팀의 목표는 다른 팀들이 구현한 기능들이 이상 없이 작동할 수 있도록 게임의 메인 메뉴와 다른 화면들의 UI를 개발하는 것입니다.
 
 ## Team Requirements
 
-- Implementation of the Main Menu
-  메인 메뉴 구현
+- Adding Buttons to the Main Menu UI
+  - 메인 메뉴 UI에 버튼 추가
+- Displaying Current COIN and Earned COIN Amount
+  - 현재 COIN 및 획득 COIN 수량 표시
+- Developing the GAME SETTING UI
+  - GAME SETTING UI 개발
+- Developing the ACHIEVEMENT UI
+  - ACHIEVEMENT UI 개발
+- Developing the SETTING UI
+  - SETTING UI 개발
+
 
 ## Detailed Requirements
 
-- **Game Start**: Set up a name for a player and adjust the game level to start.
-  게임 시작: 플레이어 이름 설정 및 게임 레벨 조정
-- **Record and Reward System**: Button to go into the record and reward system.
-  기록 및 업적 시스템으로 이동하는 버튼
-- **Settings**: If a player clicks the "Setting" button, they can turn on and off the sound and change the BGM.
-  설정: 사운드 켜기/끄기 및 BGM 변경 기능
-- **2-Player Game Start Button**: Start a 2-player game.
-  2인용 게임 시작 버튼
-- **Exit Button**: Button to exit the game.
-  게임 종료 버튼
-- **Shop Button**: The player can buy items or customize their outfit.
-  상점 버튼: 플레이어가 아이템을 구매하거나 의상을 커스터마이즈할 수 있음
-- **Ending Credits**: Display names of all developers and contributors to the program.
-  엔딩 크레딧: 프로그램 개발에 기여한 사람들의 이름 표시
+### UI Figma
+- https://www.figma.com/design/iQ7mdOSli2JtlgYo5jymDF/Space-Invaders?node-id=0-1&node-type=canvas&t=KVKJi2zSHLBtCSMH-0
+
+### GAME SETTING
+- Go to the GAME SETTINGS screen when playing from the Main Menu
+  - Main Menu 에서 Play시 GAME SETTING 화면으로 이동
+- Add the 1Player and 2Player options
+  - 1Player와 2Player 선택지 추가
+- Set nicknames for each player (enter alphabetically instead of the traditional way)
+  - 각 플레이어 수에 맞게 닉네임 설정 (기존 방식과 다르게 알파벳으로 입력)
+- Add a game difficulty option
+  - 게임 난이도 선택지 추가
+- Added START button
+  - START 버튼 추가
+- Go to previous window when entering ESC
+  - ESC 입력시 이전 창으로 이동
+
+
+### GAME OVER
+- Show coins earned
+  - 획득한 코인 표시
+
+### ACHIEVEMENT
+- Show achievement history
+  - 업적 기록 표시
+
+### SETTINGS
+- Add sound volume control
+  - 사운드 볼륨 조절 기능 추가
+- Added a Credit screen to display dev team information (TBA)
+  - 개발팀 정보 출력하는 Credit 화면 추가 (미정)
 
 ## Team Members and Roles
 
