@@ -6,7 +6,7 @@ Our team consists of 3 male and 4 female students. Two students have experience 
 
 ## Team Goal
 
-Our goal is to implement a "Main Menu" that seamlessly connects to each part of the game, Space Invader, ensuring that all functionalities developed by other teams work without any malfunctions.
+Our team's goal is to develop the UI of the game's main menu and other screens so that the features implemented by other teams work flawlessly.
 
 팀의 목표는 다른 팀들이 구현한 기능들이 이상 없이 작동할 수 있도록 게임의 메인 메뉴와 다른 화면들의 UI를 개발하는 것입니다.
 
