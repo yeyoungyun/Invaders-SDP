@@ -70,6 +70,11 @@ Our team's goal is to develop the UI of the game's main menu and other screens s
 
 ## Dependency
 
-- To implement features such as purchasing items and changing character designs with currency, the "store" function is required. Collaboration with the currency and item teams is essential for implementing this function. This cannot be solved internally by our team and requires external consultation.
-
-의존성: 화폐로 아이템을 구매하거나 캐릭터 디자인을 변경하는 기능을 구현하기 위해서는 "상점" 기능이 필요하며, 이를 위해 화폐와 아이템 팀과의 협의가 필수적입니다. 이 기능은 우리 팀 내부적으로 해결할 수 없으며 협의가 필요합니다.
+- Current Coin Earned Information Required
+  - 현재 Coin 획득 정보 필요
+- Coins earned at end of game information required
+  - 게임 종료시 획득 Coin 정보 필요
+- Requires player achievement information
+  - 플레이어 업적 정보 필요
+- Need sound information from sound settings
+  - 사운드 설정에서 사운드 정보 필요
