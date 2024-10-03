@@ -59,8 +59,10 @@ public class AchievementScreen extends Screen {
 
 		draw();
 		if (inputManager.isKeyDown(KeyEvent.VK_SPACE)
-				&& this.inputDelay.checkFinished())
+				&& this.inputDelay.checkFinished()) {
 			this.isRunning = false;
+			Core.getSoundManager().playSound("menuBack");
+		}
 	}
 
 	/**

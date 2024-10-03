@@ -87,28 +87,34 @@ public class GameSettingScreen extends Screen {
 			if (inputManager.isKeyDown(KeyEvent.VK_UP)){
 				this.selectedRow = (this.selectedRow - 1 + TOTAL_ROWS) % TOTAL_ROWS;
 				this.selectionCooldown.reset();
+				Core.getSoundManager().playSound("menuMove");
 			} else if (inputManager.isKeyDown(KeyEvent.VK_DOWN)) {
 				this.selectedRow = (this.selectedRow + 1) % TOTAL_ROWS;
 				this.selectionCooldown.reset();
+				Core.getSoundManager().playSound("menuMove");
 			}
 
 			if (this.selectedRow == 0) {
 				if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
 					this.isMultiplayer = false;
 					this.selectionCooldown.reset();
+					Core.getSoundManager().playSound("menuMove");
 				} else if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)) {
 					this.isMultiplayer = true;
 					this.selectionCooldown.reset();
+					Core.getSoundManager().playSound("menuMove");
 				} else if (inputManager.isKeyDown(KeyEvent.VK_BACK_SPACE)) {
 					if (isMultiplayer) {
 						if (!this.name2.isEmpty()) {
 							this.name2 = this.name2.substring(0, this.name2.length() - 1);
 							this.selectionCooldown.reset();
+							Core.getSoundManager().playSound("nameTyping");
 						}
 					} else {
 						if (!this.name1.isEmpty()) {
 							this.name1 = this.name1.substring(0, this.name1.length() - 1);
 							this.selectionCooldown.reset();
+							Core.getSoundManager().playSound("nameTyping");
 						}
 					}
 				}
@@ -118,23 +124,27 @@ public class GameSettingScreen extends Screen {
 					if (this.difficultyLevel != 0) {
 						this.difficultyLevel--;
 						this.selectionCooldown.reset();
+						Core.getSoundManager().playSound("menuMove");
 					}
 				} else if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)) {
 					if (this.difficultyLevel != 2) {
 						this.difficultyLevel++;
 						this.selectionCooldown.reset();
+						Core.getSoundManager().playSound("menuMove");
 					}
 				}
 			} else if (this.selectedRow == 2) {
 				if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
 					this.returnCode = 2;
 					this.isRunning = false;
+					Core.getSoundManager().playSound("menuClick");
 				}
 			}
 			if (inputManager.isKeyDown(KeyEvent.VK_ESCAPE)) {
 				// Return to main menu.
 				this.returnCode = 1;
 				this.isRunning = false;
+				Core.getSoundManager().playSound("menuBack");
 			}
 		}
 
@@ -153,11 +163,13 @@ public class GameSettingScreen extends Screen {
 					if (this.name2.length() < NAME_LIMIT) {
 						this.name2 += (char) keyCode;
 						this.selectionCooldown.reset();
+						Core.getSoundManager().playSound("nameTyping");
 					}
 				} else{
 					if (this.name1.length() < NAME_LIMIT) {
 						this.name1 += (char) keyCode;
 						this.selectionCooldown.reset();
+						Core.getSoundManager().playSound("nameTyping");
 					}
 				}
 			}

@@ -62,14 +62,17 @@ public class TitleScreen extends Screen {
 					|| inputManager.isKeyDown(KeyEvent.VK_W)) {
 				previousMenuItem();
 				this.selectionCooldown.reset();
+				Core.getSoundManager().playSound("menuMove");
 			}
 			if (inputManager.isKeyDown(KeyEvent.VK_DOWN)
 					|| inputManager.isKeyDown(KeyEvent.VK_S)) {
 				nextMenuItem();
 				this.selectionCooldown.reset();
+				Core.getSoundManager().playSound("menuMove");
 			}
 			if (inputManager.isKeyDown(KeyEvent.VK_SPACE)){
 				this.isRunning = false;
+				Core.getSoundManager().playSound("menuClick");
 			}
 		}
 	}
