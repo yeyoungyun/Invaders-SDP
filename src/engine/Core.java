@@ -95,6 +95,9 @@ public final class Core {
 			e.printStackTrace();
 		}
 
+		// Initialize SoundManager instance when starting the game.
+		SoundManager.getInstance();
+
 		frame = new Frame(WIDTH, HEIGHT);
 		DrawManager.getInstance().setFrame(frame);
 		int width = frame.getWidth();
@@ -204,6 +207,8 @@ public final class Core {
 
 		fileHandler.flush();
 		fileHandler.close();
+		SoundManager.getInstance().closeAllSounds();
+
 		System.exit(0);
 	}
 
@@ -230,6 +235,15 @@ public final class Core {
 	 */
 	public static DrawManager getDrawManager() {
 		return DrawManager.getInstance();
+	}
+
+	/**
+	 * Controls access to the sound manager.
+	 *
+	 * @return Application sound manager.
+	 */
+	public static SoundManager getSoundManager() {
+		return SoundManager.getInstance();
 	}
 
 	/**

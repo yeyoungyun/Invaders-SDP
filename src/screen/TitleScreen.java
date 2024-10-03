@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 
 import engine.Cooldown;
 import engine.Core;
-import engine.SoundManager;
 
 /**
  * Implements the title screen.
@@ -19,9 +18,6 @@ public class TitleScreen extends Screen {
 	
 	/** Time between changes in user selection. */
 	private Cooldown selectionCooldown;
-
-	/** SoundManager instance manages sound effects and BGM. **/
-	private SoundManager soundManager;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -40,11 +36,6 @@ public class TitleScreen extends Screen {
 		this.returnCode = 6;
 		this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
 		this.selectionCooldown.reset();
-
-		// SoundManager init and load sounds
-		this.soundManager = new SoundManager();
-		this.soundManager.loadSound("menuMove", "res/sound/SFX/menuMove.wav");
-		this.soundManager.loadSound("menuClick", "res/sound/SFX/menuClick.wav");
 	}
 
 	/**
@@ -71,17 +62,17 @@ public class TitleScreen extends Screen {
 					|| inputManager.isKeyDown(KeyEvent.VK_W)) {
 				previousMenuItem();
 				this.selectionCooldown.reset();
-				soundManager.playSound("menuMove");
+				Core.getSoundManager().playSound("menuMove");
 			}
 			if (inputManager.isKeyDown(KeyEvent.VK_DOWN)
 					|| inputManager.isKeyDown(KeyEvent.VK_S)) {
 				nextMenuItem();
 				this.selectionCooldown.reset();
-				soundManager.playSound("menuMove");
+				Core.getSoundManager().playSound("menuMove");
 			}
 			if (inputManager.isKeyDown(KeyEvent.VK_SPACE)){
 				this.isRunning = false;
-				soundManager.playSound("menuClick");
+				Core.getSoundManager().playSound("menuClick");
 			}
 		}
 	}

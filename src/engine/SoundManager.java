@@ -1,9 +1,9 @@
 package engine;
 
 import javax.sound.sampled.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Manages sound effects and BGM.
@@ -14,28 +14,68 @@ import java.util.*;
 
 public class SoundManager {
 
+    /** Singleton instance of the class. */
+    private static SoundManager instance;
     /** Save the sound file **/
-    private HashMap<String, Clip> soundClips;
+    private static HashMap<String, Clip> soundClips;
+    /** Application logger. */
+    private static Logger logger;
 
-    /** Init the HashMap **/
-    public SoundManager() {
+    /**
+     * Private constructor.
+     */
+    private SoundManager() {
+        logger = Core.getLogger();
+        logger.info("Started loading sound resources.");
+
         soundClips = new HashMap<>();
+
+        try {
+            loadSound("menuBack", "res/sound/SFX/menuBack.wav");
+            loadSound("menuClick", "res/sound/SFX/menuClick.wav");
+            loadSound("menuMove", "res/sound/SFX/menuMove.wav");
+            loadSound("nameTyping", "res/sound/SFX/nameTyping.wav");
+
+            logger.info("Finished loading all sounds.");
+        } catch (IOException e) {
+            logger.warning("Loading failed: IO Exception");
+        } catch (UnsupportedAudioFileException e) {
+            logger.warning("Loading failed: Unsupported audio file: ");
+        } catch (LineUnavailableException e) {
+            logger.warning("Loading failed: Line unavailable: ");
+        }
     }
 
-    /** Load the sound file **/
-    public void loadSound(String soundName, String filePath) {
-        try {
-            File soundFile = new File(filePath);
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
+    /**
+     * Returns shared instance of SoundManager.
+     *
+     * @return Shared instance of SoundManager.
+     */
+    protected static SoundManager getInstance() {
+        if (instance == null)
+            instance = new SoundManager();
+        return instance;
+    }
 
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
+    /**
+     * Load the sound and save the map.
+     *
+     * @param soundName Key value of sound
+     * @param filePath Path of the sound file
+     * @throws IOException,UnsupportedAudioFileException,LineUnavailableException exception
+     */
+    public void loadSound(String soundName, String filePath) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
+        File soundFile = new File(filePath);
 
-            soundClips.put(soundName, clip);
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException | NullPointerException e) {
-            System.out.println("Error loading sound: " + e.getMessage());
-            e.printStackTrace();
+        if (!soundFile.exists()) {
+            throw new IOException("Sound file not found: " + filePath);
         }
+
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
+        Clip clip = AudioSystem.getClip();
+        clip.open(audioStream);
+
+        soundClips.put(soundName, clip);
     }
 
     /** Play the sound file **/
@@ -69,11 +109,14 @@ public class SoundManager {
         }
     }
 
-    /** Close the sound file **/
-    public void closeSound(String soundName) {
-        Clip clip = soundClips.get(soundName);
-        if (clip != null) {
-            clip.close();
+    /** Close all sound files **/
+    public void closeAllSounds() {
+        for (String soundName : soundClips.keySet()) {
+            Clip clip = soundClips.get(soundName);
+            if (clip != null) {
+                clip.close();
+            }
         }
     }
+
 }
