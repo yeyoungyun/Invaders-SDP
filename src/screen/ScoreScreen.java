@@ -8,6 +8,7 @@ import java.util.List;
 import engine.Core;
 import engine.GameState;
 import engine.Score;
+import entity.Wallet;
 
 /**
  * Implements the score screen.
@@ -34,7 +35,7 @@ public class ScoreScreen extends Screen {
 	/** Checks if current score is a new high score. */
 	private boolean isNewRecord;
 	/** Number of coins earned in the game */
-	private int coinsEaraned;
+	private int coinsEarned;
 	/** Player's name */
 	private String name1, name2;
 
@@ -52,7 +53,7 @@ public class ScoreScreen extends Screen {
 	 *            Current game state.
 	 */
 	public ScoreScreen(final int width, final int height, final int fps,
-			final GameState gameState) {
+			final GameState gameState, final Wallet wallet) {
 		super(width, height, fps);
 
 		this.name1 = name1;
@@ -62,7 +63,9 @@ public class ScoreScreen extends Screen {
 		this.livesRemaining = gameState.getLivesRemaining();
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
-		this.coinsEaraned = gameState.getCoinsEarned();
+		this.coinsEarned = gameState.getScore()/10;
+		wallet.deposit(coinsEarned);
+
 		this.isNewRecord = false;
 
 		try {
@@ -140,7 +143,7 @@ public class ScoreScreen extends Screen {
 				this.isNewRecord);
 		drawManager.drawResults(this, this.score, this.livesRemaining,
 				this.shipsDestroyed, (float) this.shipsDestroyed
-						/ this.bulletsShot, this.isNewRecord, this.coinsEaraned);
+						/ this.bulletsShot, this.isNewRecord, this.coinsEarned);
 
 		drawManager.completeDrawing(this);
 	}
