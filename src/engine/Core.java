@@ -68,7 +68,8 @@ public final class Core {
 	private static Handler fileHandler;
 	/** Logger handler for printing to console. */
 	private static ConsoleHandler consoleHandler;
-
+	/** Initialize singleton instance of SoundManager and return that */
+	private static final SoundManager soundManager = SoundManager.getInstance();
 
 	/**
 	 * Test implementation.
@@ -94,9 +95,6 @@ public final class Core {
 			// TODO handle exception
 			e.printStackTrace();
 		}
-
-		// Initialize SoundManager instance when starting the game.
-		SoundManager.getInstance();
 
 		frame = new Frame(WIDTH, HEIGHT);
 		DrawManager.getInstance().setFrame(frame);
@@ -207,7 +205,7 @@ public final class Core {
 
 		fileHandler.flush();
 		fileHandler.close();
-		SoundManager.getInstance().closeAllSounds();
+		soundManager.closeAllSounds();
 
 		System.exit(0);
 	}
@@ -235,15 +233,6 @@ public final class Core {
 	 */
 	public static DrawManager getDrawManager() {
 		return DrawManager.getInstance();
-	}
-
-	/**
-	 * Controls access to the sound manager.
-	 *
-	 * @return Application sound manager.
-	 */
-	public static SoundManager getSoundManager() {
-		return SoundManager.getInstance();
 	}
 
 	/**

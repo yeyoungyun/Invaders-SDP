@@ -17,9 +17,11 @@ public class SoundManager {
     /** Singleton instance of the class. */
     private static SoundManager instance;
     /** Save the sound file **/
-    private static HashMap<String, Clip> soundClips;
+    private static HashMap<Sound, Clip> soundClips;
     /** Application logger. */
     private static Logger logger;
+    /** Sound manager activation flag */
+    private boolean soundEnabled;
 
     /**
      * Private constructor.
@@ -29,20 +31,22 @@ public class SoundManager {
         logger.info("Started loading sound resources.");
 
         soundClips = new HashMap<>();
-
+        soundEnabled = true;
         try {
-            loadSound("menuBack", "res/sound/SFX/menuBack.wav");
-            loadSound("menuClick", "res/sound/SFX/menuClick.wav");
-            loadSound("menuMove", "res/sound/SFX/menuMove.wav");
-            loadSound("nameTyping", "res/sound/SFX/nameTyping.wav");
+            loadSound(Sound.MENU_BACK, "res/sound/SFX/menuBack.wav");
+            loadSound(Sound.MENU_CLICK, "res/sound/SFX/menuClick.wav");
+            loadSound(Sound.MENU_MOVE, "res/sound/SFX/menuMove.wav");
+            loadSound(Sound.MENU_TYPING, "res/sound/SFX/nameTyping.wav");
 
             logger.info("Finished loading all sounds.");
+
         } catch (IOException e) {
             logger.warning("Loading failed: IO Exception");
         } catch (UnsupportedAudioFileException e) {
-            logger.warning("Loading failed: Unsupported audio file: ");
-        } catch (LineUnavailableException e) {
-            logger.warning("Loading failed: Line unavailable: ");
+            logger.warning("Loading failed: Unsupported audio file.");
+        } catch (LineUnavailableException | IllegalArgumentException e) {
+            soundEnabled = false;
+            logger.warning("Loading failed: Sound device not found.");
         }
     }
 
@@ -51,7 +55,7 @@ public class SoundManager {
      *
      * @return Shared instance of SoundManager.
      */
-    protected static SoundManager getInstance() {
+    public static SoundManager getInstance() {
         if (instance == null)
             instance = new SoundManager();
         return instance;
@@ -60,13 +64,12 @@ public class SoundManager {
     /**
      * Load the sound and save the map.
      *
-     * @param soundName Key value of sound
+     * @param sound Key value of sound
      * @param filePath Path of the sound file
-     * @throws IOException,UnsupportedAudioFileException,LineUnavailableException exception
+     * @throws IOException,UnsupportedAudioFileException,LineUnavailableException,IllegalArgumentException exception
      */
-    public void loadSound(String soundName, String filePath) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
+    public void loadSound(Sound sound, String filePath) throws IOException, UnsupportedAudioFileException, LineUnavailableException, IllegalArgumentException {
         File soundFile = new File(filePath);
-
         if (!soundFile.exists()) {
             throw new IOException("Sound file not found: " + filePath);
         }
@@ -75,46 +78,66 @@ public class SoundManager {
         Clip clip = AudioSystem.getClip();
         clip.open(audioStream);
 
-        soundClips.put(soundName, clip);
+        soundClips.put(sound, clip);
     }
 
-    /** Play the sound file **/
-    public void playSound(String soundName) {
-        Clip clip = soundClips.get(soundName);
-        if (clip != null) {
-            clip.setFramePosition(0);
-            clip.start();
-        } else {
-            System.out.println("Sound not found: " + soundName);
+    /**
+     * Play the sound file.
+     *
+     * @param sound Key value of sound
+     */
+    public void playSound(Sound sound) {
+        if (soundEnabled) {
+            Clip clip = soundClips.get(sound);
+            if (clip != null) {
+                clip.setFramePosition(0);
+                clip.start();
+            } else {
+                System.out.println("Sound not found: " + sound);
+            }
         }
     }
 
-    /** Stop the sound file **/
-    public void stopSound(String soundName) {
-        Clip clip = soundClips.get(soundName);  // HashMap에서 사운드 찾기
-        if (clip != null && clip.isRunning()) {
-            clip.stop();
-        } else {
-            System.out.println("Sound not playing or not found: " + soundName);
+    /**
+     * Stop the sound file.
+     *
+     * @param sound Key value of sound
+     */
+    public void stopSound(Sound sound) {
+        if (soundEnabled) {
+            Clip clip = soundClips.get(sound);
+            if (clip != null && clip.isRunning()) {
+                clip.stop();
+            } else {
+                System.out.println("Sound not playing or not found: " + sound);
+            }
         }
     }
 
-    /** Loop the sound file **/
-    public void loopSound(String soundName) {
-        Clip clip = soundClips.get(soundName);
-        if (clip != null) {
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        } else {
-            System.out.println("Sound not found: " + soundName);
+    /**
+     * Loop the sound file.
+     *
+     * @param sound Key value of sound
+     */
+    public void loopSound(Sound sound) {
+        if (soundEnabled) {
+            Clip clip = soundClips.get(sound);
+            if (clip != null) {
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            } else {
+                System.out.println("Sound not found: " + sound);
+            }
         }
     }
 
     /** Close all sound files **/
     public void closeAllSounds() {
-        for (String soundName : soundClips.keySet()) {
-            Clip clip = soundClips.get(soundName);
-            if (clip != null) {
-                clip.close();
+        if (soundEnabled) {
+            for (Sound sound : soundClips.keySet()) {
+                Clip clip = soundClips.get(sound);
+                if (clip != null) {
+                    clip.close();
+                }
             }
         }
     }
