@@ -80,7 +80,14 @@ public final class DrawManager {
 		/** Bonus ship. */
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
-		Explosion
+		Explosion,
+
+		/** 2nd player ship. */
+		Ship2,
+		/** 3rd player ship. */
+		Ship3,
+		/** 4th player ship. */
+		Ship4,
 	};
 
 	/**
@@ -106,6 +113,9 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
+			spriteMap.put(SpriteType.Ship2, new boolean[13][8]);
+			spriteMap.put(SpriteType.Ship3, new boolean[13][8]);
+			spriteMap.put(SpriteType.Ship4, new boolean[13][8]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
