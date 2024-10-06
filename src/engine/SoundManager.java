@@ -87,28 +87,30 @@ public class SoundManager {
     }
 
     /**
-     * Method to convert integer volume to decibels non-linearly.
+     * Apply volume to all audio files by converting integer volume to decibels non-linearly.
      *
      * @param volume Int value of volume (0-10)
-     * @return Converted decibel value
      */
-    private float intToDecibel(int volume) {
-        return MIN_VOL + (float)(Math.log(volume + 1) / Math.log(11)) * (MAX_VOL - MIN_VOL);
+    private void setVolume(int volume) {
+        float newVolume = MIN_VOL + (float)(Math.log(volume + 1) / Math.log(11)) * (MAX_VOL - MIN_VOL);
+
+        for (Clip clip : soundClips.values()) {
+            try {
+                FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                volumeControl.setValue(newVolume);
+            } catch (IllegalArgumentException e) {
+                logger.warning("Failed to set volume: " + e.getMessage());
+            }
+        }
     }
 
     /**
      * Increases the volume of all sounds by 1.
      */
     public void volumeUp() {
-        if (currentVolume < 10) {
+        if (soundEnabled && (currentVolume < 10)) {
             currentVolume++;
-            float newVolume = intToDecibel(currentVolume);
-            for (Clip clip : soundClips.values()) {
-                if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
-                    FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-                    volumeControl.setValue(newVolume);
-                }
-            }
+            setVolume(currentVolume);
         }
     }
 
@@ -116,15 +118,9 @@ public class SoundManager {
      * Decreases the volume of all sounds by 1.
      */
     public void volumeDown() {
-        if (currentVolume > 0) {
+        if (soundEnabled && (currentVolume > 0)) {
             currentVolume--;
-            float newVolume = intToDecibel(currentVolume);
-            for (Clip clip : soundClips.values()) {
-                if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
-                    FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-                    volumeControl.setValue(newVolume);
-                }
-            }
+            setVolume(currentVolume);
         }
     }
 
