@@ -22,6 +22,11 @@ public class SoundManager {
     private static Logger logger;
     /** Sound manager activation flag */
     private boolean soundEnabled;
+    /** Value of current volume */
+    private static int currentVolume = 10;
+    /** Maximum and minimum values of volume */
+    private final float MIN_VOL = -80.0f;
+    private final float MAX_VOL = 6.0f;
 
     /**
      * Private constructor.
@@ -79,6 +84,48 @@ public class SoundManager {
         clip.open(audioStream);
 
         soundClips.put(sound, clip);
+    }
+
+    /**
+     * Method to convert integer volume to decibels non-linearly.
+     *
+     * @param volume Int value of volume (0-10)
+     * @return Converted decibel value
+     */
+    private float intToDecibel(int volume) {
+        return MIN_VOL + (float)(Math.log(volume + 1) / Math.log(11)) * (MAX_VOL - MIN_VOL);
+    }
+
+    /**
+     * Increases the volume of all sounds by 1.
+     */
+    public void volumeUp() {
+        if (currentVolume < 10) {
+            currentVolume++;
+            float newVolume = intToDecibel(currentVolume);
+            for (Clip clip : soundClips.values()) {
+                if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                    FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                    volumeControl.setValue(newVolume);
+                }
+            }
+        }
+    }
+
+    /**
+     * Decreases the volume of all sounds by 1.
+     */
+    public void volumeDown() {
+        if (currentVolume > 0) {
+            currentVolume--;
+            float newVolume = intToDecibel(currentVolume);
+            for (Clip clip : soundClips.values()) {
+                if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+                    FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                    volumeControl.setValue(newVolume);
+                }
+            }
+        }
     }
 
     /**
