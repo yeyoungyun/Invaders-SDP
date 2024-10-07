@@ -105,6 +105,11 @@ public class SoundManager {
     }
 
     /**
+     * @return current volume
+     * */
+    public int getVolume() { return currentVolume; }
+
+    /**
      * Increases the volume of all sounds by 1.
      */
     public void volumeUp() {
