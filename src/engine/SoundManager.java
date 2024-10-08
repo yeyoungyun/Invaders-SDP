@@ -49,6 +49,8 @@ public class SoundManager {
             loadSound(Sound.PLAYER_MOVE, "res/sound/SFX/playerMove.wav");
             loadSound(Sound.COIN_INSUFFICIENT, "res/sound/SFX/coinInsufficient.wav");
             loadSound(Sound.COIN_USE, "res/sound/SFX/coinUse.wav");
+            loadSound(Sound.BGM_MAIN, "res/sound/SFX/BGM_main.wav");
+            loadSound(Sound.BGM_GAMEOVER, "res/sound/SFX/BGM_gameOver.wav");
 
             logger.info("Finished loading all sounds.");
 

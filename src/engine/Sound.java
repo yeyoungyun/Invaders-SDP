@@ -18,5 +18,7 @@ public enum Sound {
     PLAYER_LASER,
     PLAYER_MOVE,
     COIN_USE,
-    COIN_INSUFFICIENT
+    COIN_INSUFFICIENT,
+    BGM_GAMEOVER,
+    BGM_MAIN;
 }
