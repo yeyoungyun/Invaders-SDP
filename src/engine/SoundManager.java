@@ -22,7 +22,7 @@ public class SoundManager {
     private static Logger logger;
     /** Sound manager activation flag */
     private boolean soundEnabled;
-    /** Value of current volume */
+    /** Default value of current volume */
     private static int currentVolume = 10;
     /** Maximum and minimum values of volume */
     private final float MIN_VOL = -80.0f;
@@ -49,6 +49,8 @@ public class SoundManager {
             loadSound(Sound.PLAYER_MOVE, "res/sound/SFX/playerMove.wav");
             loadSound(Sound.COIN_INSUFFICIENT, "res/sound/SFX/coinInsufficient.wav");
             loadSound(Sound.COIN_USE, "res/sound/SFX/coinUse.wav");
+
+            setVolume(currentVolume);
 
             logger.info("Finished loading all sounds.");
 
