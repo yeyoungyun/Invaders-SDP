@@ -25,6 +25,8 @@ public abstract class Ship extends Entity {
 	protected final ShipMultipliers multipliers;
 	/** Name of the ship. */
 	public final String name;
+	/** Type of sprite to be drawn. */
+	private final SpriteType baseSprite;
 	
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
@@ -54,6 +56,7 @@ public abstract class Ship extends Entity {
 
 		this.name = name;
 		this.multipliers = multipliers;
+		this.baseSprite = spriteType;
 		this.spriteType = spriteType;
 		this.shootingCooldown = Core.getCooldown(this.getShootingInterval());
 		this.destructionCooldown = Core.getCooldown(1000);
@@ -65,6 +68,8 @@ public abstract class Ship extends Entity {
 	public enum ShipType {
 		StarDefender,
 		VoidReaper,
+		GalacticGuardian,
+		CosmicCruiser,
 	}
 
 	/**
@@ -107,7 +112,7 @@ public abstract class Ship extends Entity {
 		if (!this.destructionCooldown.checkFinished())
 			this.spriteType = SpriteType.ShipDestroyed;
 		else
-			this.spriteType = SpriteType.Ship;
+			this.spriteType = this.baseSprite;
 	}
 
 	/**

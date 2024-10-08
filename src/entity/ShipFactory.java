@@ -18,6 +18,8 @@ public class ShipFactory {
         return switch (type) {
             case StarDefender -> new StarDefender(positionX, positionY);
             case VoidReaper -> new VoidReaper(positionX, positionY);
+            case GalacticGuardian -> new GalacticGuardian(positionX, positionY);
+            case CosmicCruiser -> new CosmicCruiser(positionX, positionY);
         };
     }
 }
