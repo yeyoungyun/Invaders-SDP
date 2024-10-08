@@ -20,6 +20,8 @@ public enum Sound {
     COIN_USE,
     COIN_INSUFFICIENT,
     BGM_SHOP,
+    BGM_GAMEOVER,
+    BGM_MAIN
     BGM_LV1,
     BGM_LV2,
     BGM_LV3,
