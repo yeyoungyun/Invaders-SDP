@@ -22,7 +22,7 @@ public class SoundManager {
     private static Logger logger;
     /** Sound manager activation flag */
     private boolean soundEnabled;
-    /** Default value of current volume */
+    /** Value of current volume */
     private static int currentVolume = 10;
     /** Maximum and minimum values of volume */
     private final float MIN_VOL = -80.0f;
@@ -49,9 +49,17 @@ public class SoundManager {
             loadSound(Sound.PLAYER_MOVE, "res/sound/SFX/playerMove.wav");
             loadSound(Sound.COIN_INSUFFICIENT, "res/sound/SFX/coinInsufficient.wav");
             loadSound(Sound.COIN_USE, "res/sound/SFX/coinUse.wav");
-
-            setVolume(currentVolume);
-
+            loadSound(Sound.BGM_MAIN, "res/sound/SFX/BGM_main.wav");
+            loadSound(Sound.BGM_GAMEOVER, "res/sound/SFX/BGM_gameOver.wav");
+            loadSound(Sound.BGM_SHOP, "res/sound/BGM/bgmShop.wav");
+            loadSound(Sound.BGM_LV1, "res/sound/BGM/bgmLv1.wav");
+            loadSound(Sound.BGM_LV2, "res/sound/BGM/bgmLv2.wav");
+            loadSound(Sound.BGM_LV3, "res/sound/BGM/bgmLv3.wav");
+            loadSound(Sound.BGM_LV4, "res/sound/BGM/bgmLv4.wav");
+            loadSound(Sound.BGM_LV5, "res/sound/BGM/bgmLv5.wav");
+            loadSound(Sound.BGM_LV6, "res/sound/BGM/bgmLv6.wav");
+            loadSound(Sound.BGM_LV7, "res/sound/BGM/bgmLv7.wav");
+          
             logger.info("Finished loading all sounds.");
 
         } catch (IOException e) {
