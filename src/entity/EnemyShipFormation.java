@@ -25,8 +25,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private static final int INIT_POS_Y = 100;
 	/** Distance between ships. */
 	private static final int SEPARATION_DISTANCE = 40;
-	/** Proportion of F-type ships. */
-	private static final double PROPORTION_F = 0.1;
 	/** Proportion of E-type ships. */
 	private static final double PROPORTION_E = 0.1;
 	/** Proportion of D-type ships. */
@@ -143,15 +141,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		for (List<EnemyShip> column : this.enemyShips) {
 			for (int i = 0; i < this.nShipsHigh; i++) {
-				if (i / (float) this.nShipsHigh < PROPORTION_F)
-					spriteType = SpriteType.EnemyShipF1;
-				else if (i / (float) this.nShipsHigh < PROPORTION_F + PROPORTION_E)
+				if (i / (float) this.nShipsHigh < PROPORTION_E)
 					spriteType = SpriteType.EnemyShipE1;
-				else if (i / (float) this.nShipsHigh < PROPORTION_F + PROPORTION_E + PROPORTION_D)
+				else if (i / (float) this.nShipsHigh <  PROPORTION_E + PROPORTION_D)
 					spriteType = SpriteType.EnemyShipD1;
-				else if (i / (float) this.nShipsHigh < PROPORTION_F + PROPORTION_E + PROPORTION_D + PROPORTION_C)
+				else if (i / (float) this.nShipsHigh <  PROPORTION_E + PROPORTION_D + PROPORTION_C)
 					spriteType = SpriteType.EnemyShipC1;
-				else if (i / (float) this.nShipsHigh < PROPORTION_F + PROPORTION_E + PROPORTION_D + PROPORTION_C + PROPORTION_B)
+				else if (i / (float) this.nShipsHigh <  PROPORTION_E + PROPORTION_D + PROPORTION_C + PROPORTION_B)
 					spriteType = SpriteType.EnemyShipB1;
 				else
 					spriteType = SpriteType.EnemyShipA1;

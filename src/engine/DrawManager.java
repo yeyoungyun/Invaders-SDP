@@ -72,6 +72,7 @@ public final class DrawManager {
 	public static enum SpriteType {
 		/** Player ship. */
 		Ship,
+
 		/** Destroyed player ship. */
 		ShipDestroyed,
 		/** Player bullet. */
@@ -90,6 +91,16 @@ public final class DrawManager {
 		EnemyShipC1,
 		/** Third enemy ship - second form. */
 		EnemyShipC2,
+		/** Bonus ship. */
+		EnemyShipSpecial,
+		/** Destroyed enemy ship. */
+		Explosion,
+        /** 2nd player ship. */
+        Ship2,
+        /** 3rd player ship. */
+        Ship3,
+        /** 4th player ship. */
+        Ship4,
 		/** Fourth enemy ship - first form. */
 		EnemyShipD1,
 		/** Fourth enemy ship - second form. */
@@ -100,19 +111,6 @@ public final class DrawManager {
 		EnemyShipE2,
 		/** Elite enemy ship - first form. */
 		EnemyShipF1,
-		/** Elite enemy ship - second form. */
-		EnemyShipF2,
-		/** Bonus ship. */
-		EnemyShipSpecial,
-		/** Destroyed enemy ship. */
-		Explosion,
-
-		/** 2nd player ship. */
-		Ship2,
-		/** 3rd player ship. */
-		Ship3,
-		/** 4th player ship. */
-		Ship4,
 	};
 
 	/**
@@ -136,17 +134,16 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipB2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipC1, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipD1, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipD2, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipE1, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipE2, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipF1, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipF2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
 			spriteMap.put(SpriteType.Ship2, new boolean[13][8]);
 			spriteMap.put(SpriteType.Ship3, new boolean[13][8]);
 			spriteMap.put(SpriteType.Ship4, new boolean[13][8]);
+			spriteMap.put(SpriteType.EnemyShipD1, new boolean[12][8]);
+			spriteMap.put(SpriteType.EnemyShipD2, new boolean[12][8]);
+			spriteMap.put(SpriteType.EnemyShipE1, new boolean[12][8]);
+			spriteMap.put(SpriteType.EnemyShipE2, new boolean[12][8]);
+			spriteMap.put(SpriteType.EnemyShipF1, new boolean[12][8]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
