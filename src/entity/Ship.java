@@ -181,19 +181,19 @@ public abstract class Ship extends Entity {
 				break;
 			case 2:
 				SHOOTING_INTERVAL = 675;
-				shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+				shootingCooldown = Core.getCooldown(this.getShootingInterval());
 				break;
 			case 3:
 				SHOOTING_INTERVAL = 607;
-				shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+				shootingCooldown = Core.getCooldown(this.getShootingInterval());
 				break;
 			case 4:
 				SHOOTING_INTERVAL = 546;
-				shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+				shootingCooldown = Core.getCooldown(this.getShootingInterval());
 				break;
 			default:
 				SHOOTING_INTERVAL = 750;
-				shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+				shootingCooldown = Core.getCooldown(this.getShootingInterval());
 		}
 	}
 }
