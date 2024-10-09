@@ -117,7 +117,7 @@ public class ScoreScreen extends Screen {
 				// Return to main menu.
 				this.returnCode = 1;
 				this.isRunning = false;
-				soundManager.playSound(Sound.MENU_CLICK);
+				soundManager.playSound(Sound.MENU_BACK);
 				if (this.isNewRecord)
 					saveScore();
 			} else if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
