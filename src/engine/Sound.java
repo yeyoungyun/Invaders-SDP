@@ -11,13 +11,5 @@ public enum Sound {
     MENU_BACK,
     MENU_CLICK,
     MENU_MOVE,
-    MENU_TYPING,
-    COUNTDOWN,
-    ALIEN_HIT,
-    ALIEN_LASER,
-    PLAYER_HIT,
-    PLAYER_LASER,
-    PLAYER_MOVE,
-    COIN_USE,
-    COIN_INSUFFICIENT
+    MENU_TYPING;
 }
