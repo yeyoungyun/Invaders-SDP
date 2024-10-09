@@ -6,6 +6,8 @@ import java.util.Set;
 import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager.SpriteType;
+import engine.Sound;
+import engine.SoundManager;
 
 /**
  * Implements a ship, to be controlled by the player.
@@ -32,6 +34,8 @@ public abstract class Ship extends Entity {
 	private Cooldown shootingCooldown;
 	/** Time spent inactive between hits. */
 	private Cooldown destructionCooldown;
+	/** Singleton instance of SoundManager */
+	private final SoundManager soundManager = SoundManager.getInstance();
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -78,6 +82,7 @@ public abstract class Ship extends Entity {
 	 */
 	public final void moveRight() {
 		this.positionX += this.getSpeed();
+		soundManager.playSound(Sound.PLAYER_MOVE);
 	}
 
 	/**
@@ -86,6 +91,7 @@ public abstract class Ship extends Entity {
 	 */
 	public final void moveLeft() {
 		this.positionX -= this.getSpeed();
+		soundManager.playSound(Sound.PLAYER_MOVE);
 	}
 
 	/**
@@ -99,7 +105,8 @@ public abstract class Ship extends Entity {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(positionX + this.width / 2,
-					positionY, this.getBulletSpeed()));
+					positionY,  this.getBulletSpeed()));
+			soundManager.playSound(Sound.PLAYER_LASER);
 			return true;
 		}
 		return false;
@@ -120,6 +127,7 @@ public abstract class Ship extends Entity {
 	 */
 	public final void destroy() {
 		this.destructionCooldown.reset();
+		soundManager.playSound(Sound.PLAYER_HIT);
 	}
 
 	/**
