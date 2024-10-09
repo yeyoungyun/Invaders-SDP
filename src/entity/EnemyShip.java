@@ -5,8 +5,6 @@ import java.awt.Color;
 import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager.SpriteType;
-import engine.Sound;
-import engine.SoundManager;
 
 /**
  * Implements a enemy ship, to be destroyed by the player.
@@ -31,9 +29,6 @@ public class EnemyShip extends Entity {
 	private boolean isDestroyed;
 	/** Values of the ship, in points, when destroyed. */
 	private int pointValue;
-
-	/** Singleton instance of SoundManager */
-	private final SoundManager soundManager = SoundManager.getInstance();
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -144,7 +139,6 @@ public class EnemyShip extends Entity {
 	public final void destroy() {
 		this.isDestroyed = true;
 		this.spriteType = SpriteType.Explosion;
-		soundManager.playSound(Sound.ALIEN_HIT);
 	}
 
 	/**

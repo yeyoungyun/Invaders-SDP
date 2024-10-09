@@ -22,7 +22,7 @@ public class SoundManager {
     private static Logger logger;
     /** Sound manager activation flag */
     private boolean soundEnabled;
-    /** Default value of currentVolume */
+    /** Value of current volume */
     private static int currentVolume = 10;
     /** Maximum and minimum values of volume */
     private final float MIN_VOL = -80.0f;
@@ -42,16 +42,7 @@ public class SoundManager {
             loadSound(Sound.MENU_CLICK, "res/sound/SFX/menuClick.wav");
             loadSound(Sound.MENU_MOVE, "res/sound/SFX/menuMove.wav");
             loadSound(Sound.MENU_TYPING, "res/sound/SFX/nameTyping.wav");
-            loadSound(Sound.COUNTDOWN, "res/sound/SFX/countdown.wav");
-            loadSound(Sound.ALIEN_HIT, "res/sound/SFX/alienHit.wav");
-            loadSound(Sound.ALIEN_LASER, "res/sound/SFX/alienLaser.wav");
-            loadSound(Sound.PLAYER_HIT, "res/sound/SFX/playerHit.wav");
-            loadSound(Sound.PLAYER_LASER, "res/sound/SFX/playerLaser.wav");
-            loadSound(Sound.PLAYER_MOVE, "res/sound/SFX/playerMove.wav");
-            loadSound(Sound.COIN_INSUFFICIENT, "res/sound/SFX/coinInsufficient.wav");
-            loadSound(Sound.COIN_USE, "res/sound/SFX/coinUse.wav");
 
-            setVolume(currentVolume);
             logger.info("Finished loading all sounds.");
 
         } catch (IOException e) {
