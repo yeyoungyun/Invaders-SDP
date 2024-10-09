@@ -67,6 +67,7 @@ public class GameScreen extends Screen {
 	private boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
+	private Wallet wallet;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -86,7 +87,7 @@ public class GameScreen extends Screen {
 	 */
 	public GameScreen(final GameState gameState,
 			final GameSettings gameSettings, final boolean bonusLife,
-			final int width, final int height, final int fps) {
+			final int width, final int height, final int fps, final Wallet wallet) {
 		super(width, height, fps);
 
 		this.gameSettings = gameSettings;
@@ -99,6 +100,8 @@ public class GameScreen extends Screen {
 			this.lives++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
+		this.wallet = wallet;
+
 	}
 
 	/**
@@ -109,8 +112,9 @@ public class GameScreen extends Screen {
 
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
 		enemyShipFormation.attach(this);
-		this.ship = ShipFactory.create(this.shipType, this.width / 2, this.height - 100);
-		// Appears each 10-30 seconds.
+		this.ship = ShipFactory.create(this.shipType, this.width / 2, this.height - 70);
+        ship.applyItem(wallet);
+        // Appears each 10-30 seconds.
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
 				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
 		this.enemyShipSpecialCooldown.reset();

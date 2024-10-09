@@ -6,11 +6,13 @@ import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 import entity.ShipFactory;
 import entity.Wallet;
@@ -55,6 +57,14 @@ public final class DrawManager {
 
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, boolean[][]> spriteMap;
+
+	/** For Shopscreen image */
+	private static BufferedImage img_additionallife;
+	private static BufferedImage img_bulletspeed;
+	private static BufferedImage img_coin;
+	private static BufferedImage img_coingain;
+	private static BufferedImage img_shotinterval;
+
 
 	/** Sprite types. */
 	public static enum SpriteType {
@@ -132,6 +142,18 @@ public final class DrawManager {
 		} catch (FontFormatException e) {
 			logger.warning("Font formating failed.");
 		}
+
+		/** Shop image load*/
+		try{
+			img_additionallife = ImageIO.read(new File("res/image/additional life.jpg"));
+			img_bulletspeed = ImageIO.read(new File("res/image/bullet speed.jpg"));
+			img_coin = ImageIO.read(new File("res/image/coin.jpg"));
+			img_coingain = ImageIO.read(new File("res/image/coin gain.jpg"));
+			img_shotinterval = ImageIO.read(new File("res/image/shot interval.jpg"));
+		} catch (IOException e) {
+			logger.info("Shop image loading failed");
+		}
+
 	}
 
 	/**
@@ -178,7 +200,7 @@ public final class DrawManager {
 		fontBigMetrics = backBufferGraphics.getFontMetrics(fontBig);
 
 		// drawBorders(screen);
-		// drawGrid(screen);
+		//drawGrid(screen);
 	}
 
 	/**
@@ -553,6 +575,24 @@ public final class DrawManager {
 	}
 
 	/**
+	 * Draws credit screen.
+	 *
+	 * @param screen
+	 *            Screen to draw on.
+	 */
+	public void drawEndingCredit(final Screen screen, List<String> creditlist, int currentFrame)  {
+		backBufferGraphics.setColor(Color.WHITE);
+		final int startPoint = screen.getHeight() / 2;
+
+		for (int i = 0;i < creditlist.size(); i++) {
+			String target = creditlist.get(i);
+			drawCenteredRegularString(screen, target,startPoint + (fontRegularMetrics.getHeight() * 2) * i - currentFrame);
+		}
+
+
+	}
+
+	/**
 	 * Draws a centered string on regular font.
 	 * 
 	 * @param screen
@@ -636,6 +676,42 @@ public final class DrawManager {
 
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, titleString, screen.getHeight() / 100 * 25);
+	}
+
+	public void drawSettingsScreen(final Screen screen) {
+		String settingsTitle = "Settings"; // 타이틀
+
+		// 타이틀을 초록색으로 중앙에 그리기
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredBigString(screen, settingsTitle, screen.getHeight() / 8);
+	}
+
+	/** 볼륨 바를 그리는 메서드 */
+	public void drawVolumeBar(Screen screen, int x, int y, int totalWidth, int filledWidth, boolean isSelected) {
+		// 선택된 경우 초록색, 그렇지 않으면 흰색으로 표시
+		backBufferGraphics.setColor(isSelected ? Color.GREEN : Color.WHITE);
+		backBufferGraphics.fillRect(x, y, filledWidth, 10); // 채워진 부분
+
+		// 나머지 부분은 회색으로 표시
+		backBufferGraphics.setColor(Color.GRAY);
+		backBufferGraphics.fillRect(x + filledWidth, y, totalWidth - filledWidth, 10); // 바의 나머지 부분
+	}
+
+	/** 퍼센트 값을 그리는 메서드 */
+	public void drawVolumePercentage(Screen screen, int x, int y, int volume, boolean isSelected) {
+		String volumeText = volume + "%";
+		// 선택된 경우 초록색, 그렇지 않으면 흰색으로 표시
+		backBufferGraphics.setColor(isSelected ? Color.GREEN : Color.WHITE);
+		drawCenteredRegularString(screen, volumeText, y); // 퍼센트 값을 중앙에 표시
+	}
+
+	public void drawCenteredRegularString(final Screen screen,
+										  final String string, final int height, boolean isSelected) {
+		backBufferGraphics.setFont(fontRegular);
+		// 선택된 경우 초록색, 그렇지 않으면 흰색으로 표시
+		backBufferGraphics.setColor(isSelected ? Color.GREEN : Color.WHITE);
+		backBufferGraphics.drawString(string, screen.getWidth() / 2
+				- fontRegularMetrics.stringWidth(string) / 2, height);
 	}
 
 	/**
@@ -743,70 +819,61 @@ public final class DrawManager {
 	public void drawShop(final Screen screen, final int option, final Wallet wallet, final Cooldown money_alertcooldown, final Cooldown max_alertcooldown) {
 
 		String shopString = "Shop";
-		String instructionsString = "COIN: " + wallet.getCoin();
-		String exitinfo = "press esc to exit";
-		String coststring = "cost";
-		String[] costs = new String[] {"0", "2000", "4000", "8000", "MAX LEVEL"};
+		int shopStringY = Math.round(screen.getHeight() * 0.15f);
 
-		backBufferGraphics.setColor(Color.GRAY);
-		drawCenteredRegularString(screen,exitinfo,(screen.getHeight()/20)*5);
-		drawCenteredRegularString(screen, instructionsString,
-				(screen.getHeight() / 20)*6);
-		drawCenteredRegularString(screen,coststring,screen.getHeight() /20 *8 );
 
-		if(option==1)
-		{
-			drawCenteredRegularString(screen,costs[wallet.getBullet_lv()],screen.getHeight() /20 *9 );
-		}
-		else if(option==2)
-		{
-			drawCenteredRegularString(screen,costs[wallet.getShot_lv()],screen.getHeight() /20 *9 );
-		}
-		else if(option==3)
-		{
-			drawCenteredRegularString(screen,costs[wallet.getLives_lv()],screen.getHeight() /20 *9 );
-		}
-		else if(option==4)
-		{
-			drawCenteredRegularString(screen,costs[wallet.getCoin_lv()],screen.getHeight() /20 *9 );
-		}
+		String coinString = ":  " + wallet.getCoin();
+		String exitString = "PRESS \"ESC\" TO RETURN TO MAIN MENU";
+		String[] costs = new String[] {"2000", "4000", "8000", "MAX LEVEL"};
+
+		String[] itemString = new String[]{"BULLET SPEED", "SHOT INTERVAL", "ADDITIONAL LIFE","COIN GAIN"};
+		int[] walletLevel = new int[]{wallet.getBullet_lv(), wallet.getShot_lv(), wallet.getLives_lv(), wallet.getCoin_lv()};
+
+		BufferedImage[] itemImages = new BufferedImage[]{img_bulletspeed,img_shotinterval,img_additionallife,img_coingain};
+
+		int imgstartx = screen.getWidth()/80*23;
+		int imgstarty = screen.getHeight()/80*27;
+		int imgdis = screen.getHeight()/80*12;
+		int coinstartx = screen.getWidth()/80*55;
+		int coinstarty = screen.getHeight()/160*66;
+		int coindis = screen.getHeight()/80*12;
+		int coinSize = 20;
+		int cointextstartx = screen.getWidth()/80*60;
+		int cointextstarty = screen.getHeight()/160*71;
+		int cointextdis = screen.getHeight()/80*12;
 
 		backBufferGraphics.setColor(Color.GREEN);
-		drawCenteredBigString(screen, shopString, screen.getHeight() / 20*3);
+		drawCenteredBigString(screen, shopString, shopStringY);
+		backBufferGraphics.drawImage(img_coin, screen.getWidth()/80*39-(coinString.length()-3)*screen.getWidth()/80,screen.getHeight()/80*18,coinSize,coinSize,null);
+		backBufferGraphics.setColor(Color.WHITE);
+		backBufferGraphics.setFont(fontRegular);
+		backBufferGraphics.drawString(coinString,screen.getWidth()/80*44-(coinString.length()-3)*screen.getWidth()/80,screen.getHeight()/80*20);
 
-
-		String item1String = "bullet_speed";
-		String item2String = "shot_interval";
-		String item3String = "additional_life";
-		String item4String = "coin_gain";
-
-		if (option == 1)
-			backBufferGraphics.setColor(Color.GREEN);
-		else
+		for(int i = 0;i<4;i++)
+		{
 			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, item1String + "  LV. "+ wallet.getBullet_lv(),
-				screen.getHeight() / 3 * 2);
+			drawCenteredRegularString(screen,itemString[i],screen.getHeight()/80*(28 + 12*i));
+			for (int j = 0; j < 3; j++)
+			{
+				if (j + 2 <= walletLevel[i])
+				{
+					backBufferGraphics.setColor(Color.GREEN);
+					backBufferGraphics.fillRect(screen.getWidth() / 40 * (33 / 2) + j * (screen.getWidth() / 10), screen.getHeight() / 80 * (30 + 12*i), 20, 20);
+				} else
+				{
+					backBufferGraphics.setColor(Color.WHITE);
+					backBufferGraphics.fillRect(screen.getWidth() / 40 * (33 / 2) + j * (screen.getWidth() / 10), screen.getHeight() / 80 * (30 + 12*i), 20, 20);
+				}
+			}
+		}
 
-		if (option == 2)
-			backBufferGraphics.setColor(Color.GREEN);
-		else
-			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, item2String+ "  LV. "+ wallet.getShot_lv(), screen.getHeight()
-				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
+		backBufferGraphics.setColor(Color.WHITE);
+		backBufferGraphics.drawImage(itemImages[option-1],imgstartx,imgstarty + (imgdis*(option-1)),50,40,null);
+		backBufferGraphics.drawImage(img_coin,coinstartx,coinstarty + (coindis*(option-1)),coinSize,coinSize,null);
+		backBufferGraphics.drawString("X "+costs[walletLevel[option-1]-1],cointextstartx,cointextstarty + (cointextdis*(option-1)));
 
-		if (option == 3)
-			backBufferGraphics.setColor(Color.GREEN);
-		else
-			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, item3String+ " LV. "+ wallet.getLives_lv() , screen.getHeight() / 3
-				* 2 + fontRegularMetrics.getHeight() * 4);
-
-		if (option == 4)
-			backBufferGraphics.setColor(Color.GREEN);
-		else
-			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, item4String+ " LV. "+ wallet.getCoin_lv() , screen.getHeight() / 3
-				* 2 + fontRegularMetrics.getHeight() * 6);
+		backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen,exitString,screen.getHeight()/80*80);
 
 		if (!money_alertcooldown.checkFinished())
 		{
@@ -821,7 +888,6 @@ public final class DrawManager {
 			backBufferGraphics.fillRect((screen.getWidth()-300)/2, (screen.getHeight()-100)/2, 300, 80);
 			backBufferGraphics.setColor(Color.black);
 			drawCenteredBigString(screen, "Already max level", screen.getHeight()/2);
-
 		}
 	}
 }
