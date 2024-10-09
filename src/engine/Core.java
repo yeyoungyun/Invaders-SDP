@@ -8,13 +8,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import screen.GameScreen;
-import screen.AchievementScreen;
-import screen.ScoreScreen;
-import screen.Screen;
-import screen.TitleScreen;
-import screen.*;
-
+import entity.Ship;
 import entity.Wallet;
 import screen.*;
 
@@ -34,6 +28,8 @@ public final class Core {
 	/** Max fps of current screen. */
 	private static final int FPS = 60;
 
+	/** Base ship type. */
+	private static final Ship.ShipType BASE_SHIP = Ship.ShipType.StarDefender;
 	/** Max lives. */
 	private static int MAX_LIVES;
 	/** Levels between extra life. */
@@ -123,8 +119,8 @@ public final class Core {
 
 		int returnCode = 1;
 		do {
-			MAX_LIVES = wallet.getLives_lv()+2;
-			gameState = new GameState(1, 0, MAX_LIVES, 0, 0);
+            MAX_LIVES = wallet.getLives_lv()+2;
+			gameState = new GameState(1, 0, BASE_SHIP, MAX_LIVES, 0, 0);
 
 			switch (returnCode) {
 			case 1:
@@ -154,6 +150,7 @@ public final class Core {
 
 					gameState = new GameState(gameState.getLevel() + 1,
 							gameState.getScore(),
+							gameState.getShipType(),
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed());
@@ -164,6 +161,7 @@ public final class Core {
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
 						+ gameState.getScore() + ", "
+						+ gameState.getShipType().toString() + " ship, "
 						+ gameState.getLivesRemaining() + " lives remaining, "
 						+ gameState.getBulletsShot() + " bullets shot and "
 						+ gameState.getShipsDestroyed() + " ships destroyed.");
