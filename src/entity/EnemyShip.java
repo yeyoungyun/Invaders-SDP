@@ -22,6 +22,12 @@ public class EnemyShip extends Entity {
 	private static final int B_TYPE_POINTS = 20;
 	/** Point value of a type C enemy. */
 	private static final int C_TYPE_POINTS = 30;
+	/** Point value of a type D enemy. */
+	private static final int D_TYPE_POINTS = 40;
+	/** Point value of a type E enemy. */
+	private static final int E_TYPE_POINTS = 50;
+	/** Point value of a type F (elite) enemy. */
+	private static final int F_TYPE_POINTS = 60;
 	/** Point value of a bonus enemy. */
 	private static final int BONUS_TYPE_POINTS = 100;
 
@@ -65,6 +71,18 @@ public class EnemyShip extends Entity {
 		case EnemyShipC1:
 		case EnemyShipC2:
 			this.pointValue = C_TYPE_POINTS;
+			break;
+		case EnemyShipD1:
+		case EnemyShipD2:
+			this.pointValue = D_TYPE_POINTS;
+			break;
+		case EnemyShipE1:
+		case EnemyShipE2:
+			this.pointValue = E_TYPE_POINTS;
+			break;
+		case EnemyShipF1:
+		case EnemyShipF2:
+			this.pointValue = F_TYPE_POINTS;
 			break;
 		default:
 			this.pointValue = 0;
@@ -131,6 +149,24 @@ public class EnemyShip extends Entity {
 				break;
 			case EnemyShipC2:
 				this.spriteType = SpriteType.EnemyShipC1;
+				break;
+			case EnemyShipD1:
+				this.spriteType = SpriteType.EnemyShipD2;
+				break;
+			case EnemyShipD2:
+				this.spriteType = SpriteType.EnemyShipD1;
+				break;
+			case EnemyShipE1:
+				this.spriteType = SpriteType.EnemyShipE2;
+				break;
+			case EnemyShipE2:
+				this.spriteType = SpriteType.EnemyShipE1;
+				break;
+			case EnemyShipF1:
+				this.spriteType = SpriteType.EnemyShipF2;
+				break;
+			case EnemyShipF2:
+				this.spriteType = SpriteType.EnemyShipF1;
 				break;
 			default:
 				break;
