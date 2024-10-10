@@ -15,7 +15,7 @@ import engine.SoundManager;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class Ship extends Entity {
+public abstract class Ship extends Entity {
 
 	/** Time between shots. */
 	private static int SHOOTING_INTERVAL = 750;
@@ -23,11 +23,19 @@ public class Ship extends Entity {
 	private static int BULLET_SPEED = -6;
 	/** Movement of the ship for each unit of time. */
 	private static final int SPEED = 2;
+
     /** Play the sound every 0.5 second */
 	private static final int SOUND_COOLDOWN_INTERVAL = 500;
-
     /** Cooldown for playing sound */
 	private Cooldown soundCooldown;
+
+	/** Multipliers for the ship's properties. */
+	protected final ShipMultipliers multipliers;
+	/** Name of the ship. */
+	public final String name;
+	/** Type of sprite to be drawn. */
+	private final SpriteType baseSprite;
+
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
 	/** Time spent inactive between hits. */
@@ -42,14 +50,37 @@ public class Ship extends Entity {
 	 *            Initial position of the ship in the X axis.
 	 * @param positionY
 	 *            Initial position of the ship in the Y axis.
+	 * @param name
+	 * 		  	  Name of the ship.
+	 * @param multipliers
+	 * 		      Multipliers for the ship's properties.
+	 * 		      @see ShipMultipliers
+	 * @param spriteType
+	 * 		      Type of sprite to be drawn.
+	 * 		      @see SpriteType
 	 */
-	public Ship(final int positionX, final int positionY) {
+	protected Ship(final int positionX, final int positionY,
+				   final String name, final ShipMultipliers multipliers,
+				   final SpriteType spriteType) {
 		super(positionX, positionY, 13 * 2, 8 * 2, Color.GREEN);
 
-		this.spriteType = SpriteType.Ship;
-		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+		this.name = name;
+		this.multipliers = multipliers;
+		this.baseSprite = spriteType;
+		this.spriteType = spriteType;
+		this.shootingCooldown = Core.getCooldown(this.getShootingInterval());
 		this.destructionCooldown = Core.getCooldown(1000);
 		this.soundCooldown = Core.getCooldown(SOUND_COOLDOWN_INTERVAL);
+	}
+
+	/**
+	 * Types of ships available.
+	 */
+	public enum ShipType {
+		StarDefender,
+		VoidReaper,
+		GalacticGuardian,
+		CosmicCruiser,
 	}
 
 	/**
@@ -57,7 +88,7 @@ public class Ship extends Entity {
 	 * reached.
 	 */
 	public final void moveRight() {
-		this.positionX += SPEED;
+		this.positionX += this.getSpeed();
 		if (soundCooldown.checkFinished()) {
 			soundManager.playSound(Sound.PLAYER_MOVE);
 			soundCooldown.reset();
@@ -69,7 +100,8 @@ public class Ship extends Entity {
 	 * reached.
 	 */
 	public final void moveLeft() {
-		this.positionX -= SPEED;
+
+		this.positionX -= this.getSpeed();
 			if (soundCooldown.checkFinished()) {
 				soundManager.playSound(Sound.PLAYER_MOVE);
 				soundCooldown.reset();
@@ -87,7 +119,7 @@ public class Ship extends Entity {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(positionX + this.width / 2,
-					positionY, BULLET_SPEED));
+					positionY,  this.getBulletSpeed()));
 			soundManager.playSound(Sound.PLAYER_LASER);
 			return true;
 		}
@@ -101,7 +133,7 @@ public class Ship extends Entity {
 		if (!this.destructionCooldown.checkFinished())
 			this.spriteType = SpriteType.ShipDestroyed;
 		else
-			this.spriteType = SpriteType.Ship;
+			this.spriteType = this.baseSprite;
 	}
 
 	/**
@@ -127,7 +159,23 @@ public class Ship extends Entity {
 	 * @return Speed of the ship.
 	 */
 	public final int getSpeed() {
-		return SPEED;
+		return Math.round(SPEED * this.multipliers.speed());
+	}
+
+	/**
+	 * Getter for the ship's bullet speed.
+	 * @return Speed of the bullets.
+	 */
+	public final int getBulletSpeed() {
+		return Math.round(BULLET_SPEED * this.multipliers.bulletSpeed());
+	}
+
+	/**
+	 * Getter for the ship's shooting interval.
+	 * @return Time between shots.
+	 */
+	public final int getShootingInterval() {
+		return Math.round(SHOOTING_INTERVAL * this.multipliers.shootingInterval());
 	}
 
 	public void applyItem(Wallet wallet){
@@ -155,19 +203,19 @@ public class Ship extends Entity {
 				break;
 			case 2:
 				SHOOTING_INTERVAL = 675;
-				shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+				shootingCooldown = Core.getCooldown(this.getShootingInterval());
 				break;
 			case 3:
 				SHOOTING_INTERVAL = 607;
-				shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+				shootingCooldown = Core.getCooldown(this.getShootingInterval());
 				break;
 			case 4:
 				SHOOTING_INTERVAL = 546;
-				shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+				shootingCooldown = Core.getCooldown(this.getShootingInterval());
 				break;
 			default:
 				SHOOTING_INTERVAL = 750;
-				shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+				shootingCooldown = Core.getCooldown(this.getShootingInterval());
 		}
 	}
 }
