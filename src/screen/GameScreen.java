@@ -195,6 +195,7 @@ public class GameScreen extends Screen {
 					&& this.enemyShipSpecialCooldown.checkFinished()) {
 				this.enemyShipSpecial = new EnemyShip();
 				this.enemyShipSpecialCooldown.reset();
+				soundManager.playSound(Sound.UFO_APPEAR);
 				this.logger.info("A special ship appears");
 			}
 			if (this.enemyShipSpecial != null
@@ -216,7 +217,8 @@ public class GameScreen extends Screen {
 				&& !this.levelFinished) {
 			this.levelFinished = true;
 			soundManager.stopSound(soundManager.getCurrentBGM());
-			// TODO if lives==0 게임오버효과음
+			if (this.lives == 0)
+				soundManager.playSound(Sound.GAME_END);
 			this.screenFinishedCooldown.reset();
 		}
 

@@ -20,6 +20,8 @@ public enum Sound {
     PLAYER_MOVE,
     COIN_USE,
     COIN_INSUFFICIENT,
+    GAME_END,
+    UFO_APPEAR,
     BGM_MAIN,
     BGM_GAMEOVER,
     BGM_SHOP,

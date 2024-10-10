@@ -80,6 +80,8 @@ public class ScoreScreen extends Screen {
 		// deposit the earned coins to wallet
 		wallet.deposit(coinsEarned);
 
+		soundManager.loopSound(Sound.BGM_GAMEOVER);
+
 		this.isNewRecord = false;
 
 		try {
@@ -117,6 +119,7 @@ public class ScoreScreen extends Screen {
 				// Return to main menu.
 				this.returnCode = 1;
 				this.isRunning = false;
+				soundManager.stopSound(Sound.BGM_GAMEOVER);
 				soundManager.playSound(Sound.MENU_BACK);
 				if (this.isNewRecord)
 					saveScore();
@@ -124,6 +127,7 @@ public class ScoreScreen extends Screen {
 				// Play again.
 				this.returnCode = 2;
 				this.isRunning = false;
+				soundManager.stopSound(Sound.BGM_GAMEOVER);
 				soundManager.playSound(Sound.MENU_CLICK);
 				if (this.isNewRecord)
 					saveScore();

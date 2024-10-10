@@ -52,6 +52,8 @@ public class SoundManager {
             loadSound(Sound.PLAYER_MOVE, "res/sound/SFX/playerMove.wav");
             loadSound(Sound.COIN_INSUFFICIENT, "res/sound/SFX/coinInsufficient.wav");
             loadSound(Sound.COIN_USE, "res/sound/SFX/coinUse.wav");
+            loadSound(Sound.GAME_END, "res/sound/SFX/gameEnd.wav");
+            loadSound(Sound.UFO_APPEAR, "res/sound/SFX/ufoAppear.wav");
             loadSound(Sound.BGM_MAIN, "res/sound/BGM/MainTheme.wav");
             loadSound(Sound.BGM_GAMEOVER, "res/sound/BGM/GameOver.wav");
             loadSound(Sound.BGM_SHOP, "res/sound/BGM/Shop.wav");
@@ -216,14 +218,13 @@ public class SoundManager {
             Clip clip = soundClips.get(sound);
             if (clip != null) {
                 currentBGM = sound;
-                clip.setFramePosition(0);  // 처음부터 재생
-                clip.loop(Clip.LOOP_CONTINUOUSLY);  // 무한 루프
+                clip.setFramePosition(0);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
             } else {
                 logger.warning("Sound not found: " + sound);
             }
         }
     }
-
 
     /** Close all sound files **/
     public void closeAllSounds() {
