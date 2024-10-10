@@ -149,6 +149,12 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
+			spriteMap.put(SpriteType.Barrier, new boolean[39][11]);
+			spriteMap.put(SpriteType.ItemBox, new boolean[7][7]);
+			spriteMap.put(SpriteType.Web, new boolean[12][8]);
+			spriteMap.put(SpriteType.Block, new boolean[20][7]);
+			spriteMap.put(SpriteType.Blocker1, new boolean[182][93]); // artificial satellite
+			spriteMap.put(SpriteType.Blocker2, new boolean[82][81]); // astronaut
 			spriteMap.put(SpriteType.Ship2, new boolean[13][8]);
 			spriteMap.put(SpriteType.Ship3, new boolean[13][8]);
 			spriteMap.put(SpriteType.Ship4, new boolean[13][8]);
@@ -156,13 +162,7 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipD2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipE1, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipE2, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipF1, new boolean[12][8]);
-            spriteMap.put(SpriteType.Barrier, new boolean[39][11]);
-            spriteMap.put(SpriteType.ItemBox, new boolean[7][7]);
-			spriteMap.put(SpriteType.Web, new boolean[12][8]);
-			spriteMap.put(SpriteType.Block, new boolean[20][7]);
-			spriteMap.put(SpriteType.Blocker1, new boolean[182][93]); // artificial satellite
-			spriteMap.put(SpriteType.Blocker2, new boolean[82][81]); // astronaut
+			spriteMap.put(SpriteType.EnemyShipF1, new boolean[16][7]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
