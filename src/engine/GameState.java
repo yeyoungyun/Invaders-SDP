@@ -10,6 +10,7 @@ import entity.Ship;
  */
 public class GameState {
 
+	private GameState instance;
 	/** Current game level. */
 	private int level;
 	/** Current score. */
@@ -22,7 +23,6 @@ public class GameState {
 	private int bulletsShot;
 	/** Ships destroyed until now. */
 	private int shipsDestroyed;
-	/** Number of coins earned in the game */
 
 	/**
 	 * Constructor.
@@ -94,4 +94,12 @@ public class GameState {
 		return shipsDestroyed;
 	}
 
+	public double getAccuracy() {
+		if (bulletsShot == 0){
+			return 0;
+		}
+		return ((double) shipsDestroyed / bulletsShot) *100;
+	}
+
 }
+
