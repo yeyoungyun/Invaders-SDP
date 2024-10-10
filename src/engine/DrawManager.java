@@ -110,7 +110,7 @@ public final class DrawManager {
 		/** Fifth enemy ship - second form. */
 		EnemyShipE2,
 		/** Elite enemy ship - first form. */
-		EnemyShipF1,
+		EnemyShipF1
 	};
 
 	/**

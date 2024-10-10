@@ -26,6 +26,8 @@ public class EnemyShip extends Entity {
 	private static final int D_TYPE_POINTS = 40;
 	/** Point value of a type E enemy. */
 	private static final int E_TYPE_POINTS = 50;
+	/** Point value of a type F enemy*/
+	private static final int F_TYPE_POINTS = 60;
 	/** Point value of a bonus enemy. */
 	private static final int BONUS_TYPE_POINTS = 100;
 
@@ -79,7 +81,6 @@ public class EnemyShip extends Entity {
 			this.pointValue = E_TYPE_POINTS;
 			break;
 		case EnemyShipF1:
-		case EnemyShipF2:
 			this.pointValue = F_TYPE_POINTS;
 			break;
 		default:
