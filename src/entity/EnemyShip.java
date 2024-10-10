@@ -53,7 +53,7 @@ public class EnemyShip extends Entity {
 	 */
 	public EnemyShip(final int positionX, final int positionY,
 			final SpriteType spriteType) {
-		super(positionX, positionY, 12 * 2, 8 * 2, Color.WHITE);
+		super(positionX, positionY, 12 * 2, 8 * 2, getDefaultColor(spriteType));
 
 		this.spriteType = spriteType;
 		this.animationCooldown = Core.getCooldown(500);
@@ -88,6 +88,31 @@ public class EnemyShip extends Entity {
 			break;
 		}
 	}
+
+	/**
+	 * Giving color for each enemy ship
+	 */
+		public static Color getDefaultColor(SpriteType spriteType) {
+			switch (spriteType) {
+				case EnemyShipA1:
+				case EnemyShipA2:
+					return Color.RED; // Цвет для типа A
+				case EnemyShipB1:
+				case EnemyShipB2:
+					return Color.GREEN; // Цвет для типа B
+				case EnemyShipC1:
+				case EnemyShipC2:
+					return Color.BLUE; // Цвет для типа C
+				case EnemyShipD1:
+				case EnemyShipD2:
+					return Color.YELLOW; // Цвет для типа D
+				case EnemyShipE1:
+				case EnemyShipE2:
+					return Color.ORANGE; // Цвет для типа E
+				default:
+					return Color.WHITE; // Цвет по умолчанию
+			}
+		}
 
 	/**
 	 * Constructor, establishes the ship's properties for a special ship, with
