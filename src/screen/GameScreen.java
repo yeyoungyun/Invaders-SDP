@@ -49,6 +49,8 @@ public class GameScreen extends Screen {
 	/** Set of all bullets fired by on screen ships. */
 	private Set<Bullet> bullets;
 	/** Current score. */
+	private String name1;
+
 	private int score;
 	/** Player lives left. */
 	private int lives;
@@ -65,6 +67,8 @@ public class GameScreen extends Screen {
 	private Wallet wallet;
 	/** Singleton instance of SoundManager */
 	private final SoundManager soundManager = SoundManager.getInstance();
+
+	private int playTime;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
