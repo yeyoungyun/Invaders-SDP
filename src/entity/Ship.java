@@ -29,13 +29,19 @@ public abstract class Ship extends Entity {
 	public final String name;
 	/** Type of sprite to be drawn. */
 	private final SpriteType baseSprite;
-	
+
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
 	/** Time spent inactive between hits. */
 	private Cooldown destructionCooldown;
 	/** Singleton instance of SoundManager */
 	private final SoundManager soundManager = SoundManager.getInstance();
+
+	private boolean threadWeb = false;
+
+	public void setThreadWeb(boolean threadWeb) {
+		this.threadWeb = threadWeb;
+	}
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -81,8 +87,13 @@ public abstract class Ship extends Entity {
 	 * reached.
 	 */
 	public final void moveRight() {
-		this.positionX += this.getSpeed();
-		soundManager.playSound(Sound.PLAYER_MOVE);
+		if(threadWeb){
+			this.positionX += this.getSpeed() / 2;
+		}
+		else{
+			this.positionX += this.getSpeed();
+		}
+        soundManager.playSound(Sound.PLAYER_MOVE);
 	}
 
 	/**
@@ -90,8 +101,13 @@ public abstract class Ship extends Entity {
 	 * reached.
 	 */
 	public final void moveLeft() {
-		this.positionX -= this.getSpeed();
-		soundManager.playSound(Sound.PLAYER_MOVE);
+		if(threadWeb){
+			this.positionX -= this.getSpeed() / 2;
+		}
+		else{
+			this.positionX -= this.getSpeed();
+		}
+        soundManager.playSound(Sound.PLAYER_MOVE);
 	}
 
 	/**

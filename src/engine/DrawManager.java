@@ -5,7 +5,9 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -94,7 +96,14 @@ public final class DrawManager {
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
 		Explosion,
-
+		/** Spider webs restricting player movement */
+		Web,
+		/** Obstacles preventing a player's bullet */
+		Block,
+		/** Obstruction 1 (satellite) */
+		Blocker1,
+		/** Obstruction 2 (Astronaut) */
+		Blocker2,
 		/** 2nd player ship. */
 		Ship2,
 		/** 3rd player ship. */
@@ -126,6 +135,10 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
 			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
+			spriteMap.put(SpriteType.Web, new boolean[12][8]);
+			spriteMap.put(SpriteType.Block, new boolean[20][7]);
+			spriteMap.put(SpriteType.Blocker1, new boolean[182][93]); // artificial satellite
+			spriteMap.put(SpriteType.Blocker2, new boolean[82][81]); // astronaut
 			spriteMap.put(SpriteType.Ship2, new boolean[13][8]);
 			spriteMap.put(SpriteType.Ship3, new boolean[13][8]);
 			spriteMap.put(SpriteType.Ship4, new boolean[13][8]);
@@ -236,6 +249,24 @@ public final class DrawManager {
 				if (image[i][j])
 					backBufferGraphics.drawRect(positionX + i * 2, positionY
 							+ j * 2, 1, 1);
+	}
+
+	//Drawing an Entity (Blocker) that requires angle setting
+	public void drawRotatedEntity(Entity entity, int x, int y, double angle) {
+		Graphics2D g2d = (Graphics2D) backBufferGraphics; // Convert to Graphics2D
+		AffineTransform oldTransform = g2d.getTransform(); // Save previous conversion
+
+		//Set center point to rotate
+		int centerX = x + entity.getWidth() / 2;
+		int centerY = y + entity.getHeight() / 2;
+
+		//rotate by a given angle
+		g2d.rotate(Math.toRadians(angle), centerX, centerY);
+
+		//Drawing entities
+		drawEntity(entity, x, y);
+
+		g2d.setTransform(oldTransform); // Restore to original conversion state
 	}
 
 	/**
@@ -1168,6 +1199,7 @@ public final class DrawManager {
 			backBufferGraphics.fillRect((screen.getWidth()-300)/2, (screen.getHeight()-100)/2, 300, 80);
 			backBufferGraphics.setColor(Color.black);
 			drawCenteredBigString(screen, "Already max level", screen.getHeight()/2);
+
 		}
 	}
 }
