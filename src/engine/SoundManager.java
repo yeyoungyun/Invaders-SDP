@@ -69,8 +69,10 @@ public class SoundManager {
             logger.info("Finished loading all sounds.");
 
         } catch (IOException e) {
+            soundEnabled = false;
             logger.warning("Loading failed: IO Exception");
         } catch (UnsupportedAudioFileException e) {
+            soundEnabled = false;
             logger.warning("Loading failed: Unsupported audio file.");
         } catch (LineUnavailableException | IllegalArgumentException e) {
             soundEnabled = false;
@@ -226,11 +228,13 @@ public class SoundManager {
         }
     }
 
-    /** Close all sound files **/
+    /** Stop and close all sound files **/
     public void closeAllSounds() {
         if (soundEnabled) {
             for (Sound sound : soundClips.keySet()) {
                 Clip clip = soundClips.get(sound);
+                if (clip != null && clip.isRunning())
+                    clip.stop();
                 if (clip != null) {
                     clip.close();
                 }

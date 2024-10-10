@@ -44,13 +44,13 @@ public class TitleScreen extends Screen {
 		super(width, height, fps);
 
 		// Defaults to play.
+		if (!soundManager.isSoundPlaying(Sound.BGM_MAIN))
+			soundManager.loopSound(Sound.BGM_MAIN);
+
 		this.returnCode = 6;
 		this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
 		this.selectionCooldown.reset();
 		this.wallet = wallet;
-
-		if (!soundManager.isSoundPlaying(Sound.BGM_MAIN))
-			soundManager.loopSound(Sound.BGM_MAIN);
 	}
 
 	/**
