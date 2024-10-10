@@ -130,7 +130,20 @@ public class GameScreen extends Screen {
 		this.gameStartTime = System.currentTimeMillis();
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
+        soundManager.stopSound(Sound.BGM_MAIN);
 		soundManager.playSound(Sound.COUNTDOWN);
+
+		switch (this.level) {
+			case 1: soundManager.loopSound(Sound.BGM_LV1); break;
+			case 2: soundManager.loopSound(Sound.BGM_LV2); break;
+			case 3: soundManager.loopSound(Sound.BGM_LV3); break;
+			case 4: soundManager.loopSound(Sound.BGM_LV4); break;
+			case 5: soundManager.loopSound(Sound.BGM_LV5); break;
+			case 6: soundManager.loopSound(Sound.BGM_LV6); break;
+            case 7:
+				// From level 7 and above, it continues to play at BGM_LV7.
+            default: soundManager.loopSound(Sound.BGM_LV7); break;
+		}
 	}
 
 	/**
@@ -189,6 +202,7 @@ public class GameScreen extends Screen {
 					&& this.enemyShipSpecialCooldown.checkFinished()) {
 				this.enemyShipSpecial = new EnemyShip();
 				this.enemyShipSpecialCooldown.reset();
+				soundManager.playSound(Sound.UFO_APPEAR);
 				this.logger.info("A special ship appears");
 			}
 			if (this.enemyShipSpecial != null
@@ -209,6 +223,9 @@ public class GameScreen extends Screen {
 		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
 				&& !this.levelFinished) {
 			this.levelFinished = true;
+			soundManager.stopSound(soundManager.getCurrentBGM());
+			if (this.lives == 0)
+				soundManager.playSound(Sound.GAME_END);
 			this.screenFinishedCooldown.reset();
 		}
 

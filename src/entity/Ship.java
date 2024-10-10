@@ -23,13 +23,19 @@ public abstract class Ship extends Entity {
 	private static int BULLET_SPEED = -6;
 	/** Movement of the ship for each unit of time. */
 	private static final int SPEED = 2;
+
+    /** Play the sound every 0.5 second */
+	private static final int SOUND_COOLDOWN_INTERVAL = 500;
+    /** Cooldown for playing sound */
+	private Cooldown soundCooldown;
+
 	/** Multipliers for the ship's properties. */
 	protected final ShipMultipliers multipliers;
 	/** Name of the ship. */
 	public final String name;
 	/** Type of sprite to be drawn. */
 	private final SpriteType baseSprite;
-	
+
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
 	/** Time spent inactive between hits. */
@@ -64,6 +70,7 @@ public abstract class Ship extends Entity {
 		this.spriteType = spriteType;
 		this.shootingCooldown = Core.getCooldown(this.getShootingInterval());
 		this.destructionCooldown = Core.getCooldown(1000);
+		this.soundCooldown = Core.getCooldown(SOUND_COOLDOWN_INTERVAL);
 	}
 
 	/**
@@ -82,7 +89,10 @@ public abstract class Ship extends Entity {
 	 */
 	public final void moveRight() {
 		this.positionX += this.getSpeed();
-		soundManager.playSound(Sound.PLAYER_MOVE);
+		if (soundCooldown.checkFinished()) {
+			soundManager.playSound(Sound.PLAYER_MOVE);
+			soundCooldown.reset();
+		}
 	}
 
 	/**
@@ -90,8 +100,12 @@ public abstract class Ship extends Entity {
 	 * reached.
 	 */
 	public final void moveLeft() {
+
 		this.positionX -= this.getSpeed();
-		soundManager.playSound(Sound.PLAYER_MOVE);
+			if (soundCooldown.checkFinished()) {
+				soundManager.playSound(Sound.PLAYER_MOVE);
+				soundCooldown.reset();
+			}
 	}
 
 	/**
