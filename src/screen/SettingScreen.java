@@ -147,7 +147,7 @@ public class SettingScreen extends Screen {
 
         int NumberOfShips = Ship.ShipType.values().length;
         for (int j = 0; j < NumberOfShips; j++){
-            drawManager.drawShipBoxes(this, this.getWidth() / 2 - 30*NumberOfShips, this.getHeight() - 100, isShipChoiceSelected, j, j==this.currentShip);
+            drawManager.drawShipBoxes(this, this.getWidth() / 2 - 30*NumberOfShips, this.getHeight() - 150, isShipChoiceSelected, j, j==this.currentShip);
         }
 
         drawManager.completeDrawing(this);
