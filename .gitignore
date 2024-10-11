@@ -171,3 +171,4 @@ log*
 *.ttf
 .checkstyle
 .idea/
+*.iml

@@ -96,9 +96,11 @@ public final class Core {
 		int returnCode = 1;
 		do {
 			MAX_LIVES = wallet.getLives_lv()+2;
-			gameState = new GameState(1, 0, BASE_SHIP, MAX_LIVES, 0, 0);
+			gameState = new GameState(1, 0, BASE_SHIP, MAX_LIVES, 0, 0, 0, "", 0);
 			achievementManager = new AchievementManager();
+
 			GameSettings gameSetting = new GameSettings(4, 4, 60, 2500);
+
 			switch (returnCode) {
 			case 1:
 				// Main menu.
@@ -128,6 +130,7 @@ public final class Core {
 							gameSetting,
 							bonusLife, width, height, FPS, wallet);
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+
 							+ " game screen at " + FPS + " fps.");
 					frame.setScreen(currentScreen);
 					LOGGER.info("Closing game screen.");
@@ -140,7 +143,11 @@ public final class Core {
 							gameState.getShipType(),
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
-							gameState.getShipsDestroyed());
+							gameState.getShipsDestroyed(),
+							gameState.getElapsedTime(),
+							gameState.getAlertMessage(),
+							0);
+          
 					endTime = System.currentTimeMillis();
 					achievementManager.updatePlaying((int) (endTime - startTime) / 1000, MAX_LIVES, gameState.getLivesRemaining(), gameState.getLevel()-1);
 				} while (gameState.getLivesRemaining() > 0);
