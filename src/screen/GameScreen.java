@@ -384,7 +384,6 @@ public class GameScreen extends Screen {
 
 		drawManager.drawLaunchTrajectory( this,this.ship.getPositionX());
 
-		System.out.println("ship position x : " + this.ship.getPositionX() + " ship position y : " + this.ship.getPositionY());
 		drawManager.drawEntity(this.ship, this.ship.getPositionX(), this.ship.getPositionY());
 
 		//draw Spider Web
