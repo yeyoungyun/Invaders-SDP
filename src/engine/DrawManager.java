@@ -72,7 +72,6 @@ public final class DrawManager {
 	public static enum SpriteType {
 		/** Player ship. */
 		Ship,
-
 		/** Destroyed player ship. */
 		ShipDestroyed,
 		/** Player bullet. */
@@ -998,6 +997,30 @@ public final class DrawManager {
 		// 선택된 경우 초록색, 그렇지 않으면 흰색으로 표시
 		backBufferGraphics.setColor(isSelected ? Color.GREEN : Color.WHITE);
 		drawCenteredRegularString(screen, volumeText, y); // 퍼센트 값을 중앙에 표시
+	}
+
+	/** Almost same function as drawVolumeBar to draw a bar to select the ship*/
+	public void drawShipBoxes(Screen screen, int x, int y, boolean isSelected, int index, boolean current) {
+		if(current){
+			// Ship box
+			backBufferGraphics.setColor(isSelected ? Color.GREEN : Color.WHITE);
+			backBufferGraphics.fillRect(x + index*60, y+index*20, isSelected ? 0 : 10, 10);
+			backBufferGraphics.setColor(Color.GREEN);
+			backBufferGraphics.fillRect(x + index*60, y+index*20, (isSelected ? 10 : 0), 10);
+			// Ship name
+			backBufferGraphics.setFont(fontRegular);
+			backBufferGraphics.drawString(Ship.ShipType.values()[index].name(), x + index*60 + 15, y+index*20);
+		} else {
+			// Ship box
+			backBufferGraphics.setColor(isSelected ? Color.GREEN : Color.WHITE);
+			backBufferGraphics.fillRect(x + index*60, y+index*20, isSelected ? 0 : 10, 10);
+			backBufferGraphics.setColor(Color.GRAY);
+			backBufferGraphics.fillRect(x + index*60, y+index*20, (isSelected ? 10 : 0), 10);
+			// Ship name
+			backBufferGraphics.setFont(fontRegular);
+			backBufferGraphics.drawString(Ship.ShipType.values()[index].name(), x + index*60 + 15, y + index*20);
+		}
+
 	}
 
 	public void drawCenteredRegularString(final Screen screen,
