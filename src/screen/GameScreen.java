@@ -555,13 +555,16 @@ public class GameScreen extends Screen {
 				for (EnemyShip enemyShip : this.enemyShipFormation)
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
+						// Decide whether to destroy according to physical strength
+						this.enemyShipFormation.HealthManageDestroy(enemyShip);
+						// If the enemy doesn't die, the combo increases;
+						// if the enemy dies, both the combo and score increase.
 						if (combo >= 5)
-							this.score += enemyShip.getPointValue() * (combo / 5 + 1);
+							this.score += this.enemyShipFormation.getPoint() * (combo / 5 + 1);
 						else
-							this.score += enemyShip.getPointValue();
-						this.shipsDestroyed++;
+							this.score += this.enemyShipFormation.getPoint();
+						this.shipsDestroyed += this.enemyShipFormation.getDistroyedship();
 						this.combo++;
-						this.enemyShipFormation.destroy(enemyShip);
 						timer.cancel();
 						isExecuted = false;
 						recyclable.add(bullet);
