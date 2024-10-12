@@ -96,7 +96,11 @@ public final class DrawManager {
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
 		Explosion,
-        /** Spider webs restricting player movement */
+		/** Barrier. */
+		Barrier,
+        /** Item Box. */
+        ItemBox,
+		/** Spider webs restricting player movement */
 		Web,
 		/** Obstacles preventing a player's bullet */
 		Block,
@@ -153,6 +157,8 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipE1, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipE2, new boolean[12][8]);
 			spriteMap.put(SpriteType.EnemyShipF1, new boolean[12][8]);
+            spriteMap.put(SpriteType.Barrier, new boolean[39][11]);
+            spriteMap.put(SpriteType.ItemBox, new boolean[7][7]);
 			spriteMap.put(SpriteType.Web, new boolean[12][8]);
 			spriteMap.put(SpriteType.Block, new boolean[20][7]);
 			spriteMap.put(SpriteType.Blocker1, new boolean[182][93]); // artificial satellite
