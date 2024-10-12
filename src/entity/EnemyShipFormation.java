@@ -433,7 +433,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public final void HealthManageDestroy(final EnemyShip destroyedShip) {
 		for (List<EnemyShip> column : this.enemyShips)
 			for (int i = 0; i < column.size(); i++)
-				if (column.get(i).equals(destroyedShip)) {
+				if (column.get(i) != null && column.get(i).equals(destroyedShip)) {
 					//If health is 0, number of remaining enemy ships--, score awarded, number of destroyed ships++
 					if(destroyedShip.getHealth() <= 0){
 						this.shipCount--;
