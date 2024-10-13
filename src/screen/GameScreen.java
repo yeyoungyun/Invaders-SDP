@@ -1,5 +1,6 @@
 package screen;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.HashSet;
@@ -277,9 +278,14 @@ public class GameScreen extends Screen {
 
 			/*Elapsed Time Update*/
 			long currentTime = System.currentTimeMillis();
+
 			if (this.prevTime != null)
 				this.elapsedTime += (int) (currentTime - this.prevTime);
+
 			this.prevTime = (int) currentTime;
+
+			if(!itemManager.isGhostActive())
+				this.ship.setColor(Color.GREEN);
 
 			if (!this.ship.isDestroyed()) {
 				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
