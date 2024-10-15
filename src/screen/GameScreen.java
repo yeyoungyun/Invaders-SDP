@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,13 +18,14 @@ import java.util.TimerTask;
 import engine.*;
 import entity.*;
 
+
 /**
  * Implements the game screen, where the action happens.
  * 
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class GameScreen extends Screen {
+public class GameScreen extends Screen implements Callable<GameState> {
 
 	/** Milliseconds until the screen accepts user input. */
 	private static final int INPUT_DELAY = 6000;
@@ -63,6 +65,8 @@ public class GameScreen extends Screen {
 	private String name1;
 
 	private int score;
+	/** tempScore records the score up to the previous level. */
+	private int tempScore;
 	/** Current ship type. */
 	private Ship.ShipType shipType;
 	/** Player lives left. */
@@ -71,18 +75,24 @@ public class GameScreen extends Screen {
 	private int bulletsShot;
 	/** Total ships destroyed by the player. */
 	private int shipsDestroyed;
-	/** Total ships destroyed consecutive by the player. */
-	private int combo = 0;
+	/** Number of consecutive hits.
+	 * maxCombo records the maximum value of combos in that level. */
+	private int combo;
+	private int maxCombo;
 	/** Moment the game starts. */
 	private long gameStartTime;
 	/** Checks if the level is finished. */
 	private boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
+	/** Player number for two player mode **/
+	private int playerNumber;
 	/** list of highScores for find recode. */
 	private List<Score>highScores;
-	/** Elapsed time while playing this game. */
+	/** Elapsed time while playing this game.
+	 * lapTime records the time to the previous level. */
 	private int elapsedTime;
+	private int lapTime;
 	/** Keep previous timestamp. */
 	private Integer prevTime;
 	/** Alert Message when a special enemy appears. */
@@ -107,7 +117,7 @@ public class GameScreen extends Screen {
 	/* Is Blocker visible */
 	private boolean blockerVisible;
 	private Random random;
-	private List<Blocker> blockers;
+	private List<Blocker> blockers = new ArrayList<>();
 	/** Singleton instance of SoundManager */
 	private final SoundManager soundManager = SoundManager.getInstance();
 	/** Singleton instance of ItemManager. */
@@ -116,6 +126,8 @@ public class GameScreen extends Screen {
 	private Set<ItemBox> itemBoxes;
 	/** Barriers appear in game screen. */
 	private Set<Barrier> barriers;
+	/** Sound balance for each player*/
+	private float balance = 0.0f;
 
 	private int MAX_BLOCKERS = 0;
 
@@ -155,7 +167,10 @@ public class GameScreen extends Screen {
 			this.lives++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
-
+		this.playerNumber = -1;
+		this.maxCombo = gameState.getMaxCombo();
+		this.lapTime = gameState.getPrevTime();
+		this.tempScore = gameState.getPrevScore();
 
 		try {
 			this.highScores = Core.getFileManager().loadHighScores();
@@ -172,7 +187,46 @@ public class GameScreen extends Screen {
 		this.blockerCooldown = Core.getVariableCooldown(10000, 14000);
 		this.blockerCooldown.reset();
 		this.blockerVisibleCooldown = Core.getCooldown(20000);
-		this.blockers = new ArrayList<>();
+
+		try {
+			this.highScores = Core.getFileManager().loadHighScores();
+		} catch (IOException e) {
+			logger.warning("Couldn't load high scores!");
+		}
+		this.alertMessage = "";
+
+		this.wallet = wallet;
+	}
+
+	/**
+	 * Constructor, establishes the properties of the screen for two player mode.
+	 *
+	 * @param gameState
+	 *            Current game state.
+	 * @param gameSettings
+	 *            Current game settings.
+	 * @param bonusLife
+	 *            Checks if a bonus life is awarded this level.
+	 * @param width
+	 *            Screen width.
+	 * @param height
+	 *            Screen height.
+	 * @param fps
+	 *            Frames per second, frame rate at which the game is run.
+	 * @param playerNumber
+	 *            Player number for two player mode
+	 */
+	public GameScreen(final GameState gameState,
+					  final GameSettings gameSettings, final boolean bonusLife,
+					  final int width, final int height, final int fps, final Wallet wallet,
+					  final int playerNumber) {
+		this(gameState, gameSettings, bonusLife, width, height, fps, wallet);
+		this.playerNumber = playerNumber;
+		this.balance = switch (playerNumber) {
+			case 0: yield -1.0f; // 1P
+			case 1: yield 1.0f;  // 2P
+			default: yield 0.0f; // default
+		};
 	}
 
 	/**
@@ -230,15 +284,15 @@ public class GameScreen extends Screen {
 		this.bullets = new HashSet<>();
 		this.barriers = new HashSet<>();
         this.itemBoxes = new HashSet<>();
-		this.itemManager = new ItemManager(this.ship, this.enemyShipFormation, this.barriers);
+		this.itemManager = new ItemManager(this.ship, this.enemyShipFormation, this.barriers,
+				balance);
 
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
-
 		if (soundManager.isSoundPlaying(Sound.BGM_MAIN))
-        	soundManager.stopSound(Sound.BGM_MAIN);
+			soundManager.stopSound(Sound.BGM_MAIN);
 		soundManager.playSound(Sound.COUNTDOWN);
 
 		switch (this.level) {
@@ -275,7 +329,29 @@ public class GameScreen extends Screen {
 	protected final void update() {
 		super.update();
 		if (this.inputDelay.checkFinished() && !this.levelFinished) {
+			boolean player1Attacking = inputManager.isKeyDown(KeyEvent.VK_SPACE);
+			boolean player2Attacking = inputManager.isKeyDown(KeyEvent.VK_SHIFT);
 
+			if (player1Attacking && player2Attacking) {
+				// Both players are attacking
+				if (this.ship.shoot(this.bullets, this.itemManager.getShotNum()))
+					this.bulletsShot += this.itemManager.getShotNum();
+			} else {
+				switch (playerNumber) {
+					case 1:
+						if (player2Attacking) {
+							if (this.ship.shoot(this.bullets, this.itemManager.getShotNum(), 1.0f)) // Player 1 attack
+								this.bulletsShot += this.itemManager.getShotNum();
+						}
+						break;
+					default:
+						if (player1Attacking) {
+							if (this.ship.shoot(this.bullets, this.itemManager.getShotNum(), -1.0f)) // Player 1 attack
+								this.bulletsShot += this.itemManager.getShotNum();
+						}
+						break;
+				}
+			}
 			/*Elapsed Time Update*/
 			long currentTime = System.currentTimeMillis();
 
@@ -288,10 +364,23 @@ public class GameScreen extends Screen {
 				this.ship.setColor(Color.GREEN);
 
 			if (!this.ship.isDestroyed()) {
-				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
-						|| inputManager.isKeyDown(KeyEvent.VK_D);
-				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
-						|| inputManager.isKeyDown(KeyEvent.VK_A);
+				boolean moveRight;
+				boolean moveLeft;
+				switch (playerNumber) {
+					case 0:
+						moveRight = inputManager.isKeyDown(KeyEvent.VK_D);
+						moveLeft = inputManager.isKeyDown(KeyEvent.VK_A);
+						break;
+					case 1:
+						moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT);
+						moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT);
+						break;
+					default:
+						moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
+								|| inputManager.isKeyDown(KeyEvent.VK_D);
+						moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
+								|| inputManager.isKeyDown(KeyEvent.VK_A);
+				}
 
 				boolean isRightBorder = this.ship.getPositionX()
 						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
@@ -299,16 +388,11 @@ public class GameScreen extends Screen {
 						- this.ship.getSpeed() < 1;
 
 				if (moveRight && !isRightBorder) {
-					this.ship.moveRight();
+					this.ship.moveRight(balance);
 				}
 				if (moveLeft && !isLeftBorder) {
-					this.ship.moveLeft();
+					this.ship.moveLeft(balance);
 				}
-				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-					if (this.ship.shoot(this.bullets, this.itemManager.getShotNum()))
-						this.bulletsShot += this.itemManager.getShotNum();
-				boolean conti;
-
 				for(int i = 0; i < web.size(); i++) {
 					//escape Spider Web
 					if (ship.getPositionX() + 6 <= web.get(i).getPositionX() - 6
@@ -335,7 +419,7 @@ public class GameScreen extends Screen {
 				this.enemyShipSpecial = new EnemyShip();
 				this.alertMessage = "";
 				this.enemyShipSpecialCooldown.reset();
-				soundManager.playSound(Sound.UFO_APPEAR);
+				soundManager.playSound(Sound.UFO_APPEAR, balance);
 				this.logger.info("A special ship appears");
 			}
 			if(this.enemyShipSpecial == null
@@ -366,7 +450,7 @@ public class GameScreen extends Screen {
 			// If Time-stop is active, Stop updating enemy ships' move and their shoots.
 			if (!itemManager.isTimeStopActive()) {
 				this.enemyShipFormation.update();
-				this.enemyShipFormation.shoot(this.bullets, this.level);
+				this.enemyShipFormation.shoot(this.bullets, this.level, balance);
 			}
 
 			if (level >= 3) { //Events where vision obstructions appear start from level 3 onwards.
@@ -376,20 +460,26 @@ public class GameScreen extends Screen {
 
 		manageCollisions();
 		cleanBullets();
-		draw();
+		if (playerNumber >= 0)
+			drawThread();
+		else
+			draw();
 
 		if ((this.enemyShipFormation.isEmpty() || this.lives <= 0)
 				&& !this.levelFinished) {
 			this.levelFinished = true;
+
 			soundManager.stopSound(soundManager.getCurrentBGM());
 			if (this.lives == 0)
 				soundManager.playSound(Sound.GAME_END);
 			this.screenFinishedCooldown.reset();
 		}
 
-		if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
+		if (this.levelFinished && this.screenFinishedCooldown.checkFinished()) {
+			//Reset alert message when level is finished
+			this.alertMessage = "";
 			this.isRunning = false;
-
+		}
 	}
 
 	/**
@@ -398,7 +488,6 @@ public class GameScreen extends Screen {
 	private void draw() {
 		drawManager.initDrawing(this);
 		drawManager.drawGameTitle(this);
-
 
 		drawManager.drawLaunchTrajectory( this,this.ship.getPositionX());
 
@@ -450,6 +539,19 @@ public class GameScreen extends Screen {
 			drawManager.drawCountDown(this, this.level, countdown, this.bonusLife);
 			drawManager.drawHorizontalLine(this, this.height / 2 - this.height / 12);
 			drawManager.drawHorizontalLine(this, this.height / 2 + this.height / 12);
+
+			//Intermediate aggregation
+			if (this.level > 1){
+                if (countdown == 0) {
+					//Reset mac combo and edit temporary values
+                    this.lapTime = this.elapsedTime;
+                    this.tempScore = this.score;
+                    this.maxCombo = 0;
+                } else {
+					// Don't show it just before the game starts, i.e. when the countdown is zero.
+                    drawManager.interAggre(this, this.level - 1, this.maxCombo, this.elapsedTime, this.lapTime, this.score, this.tempScore);
+                }
+			}
 		}
 
 
@@ -529,6 +631,101 @@ public class GameScreen extends Screen {
 	}
 
 	/**
+	 * Draws the elements associated with the screen to thread buffer.
+	 */
+	private void drawThread() {
+		drawManager.initThreadDrawing(this, playerNumber);
+		drawManager.drawGameTitle(this, playerNumber);
+
+		drawManager.drawLaunchTrajectory( this,this.ship.getPositionX(), playerNumber);
+
+		drawManager.drawEntity(this.ship, this.ship.getPositionX(),
+				this.ship.getPositionY(), playerNumber);
+
+		//draw Spider Web
+		for (int i = 0; i < web.size(); i++) {
+			drawManager.drawEntity(this.web.get(i), this.web.get(i).getPositionX(),
+					this.web.get(i).getPositionY(), playerNumber);
+		}
+		//draw Blocks
+		for (Block block : block)
+			drawManager.drawEntity(block, block.getPositionX(),
+					block.getPositionY(), playerNumber);
+
+		if (this.enemyShipSpecial != null)
+			drawManager.drawEntity(this.enemyShipSpecial,
+					this.enemyShipSpecial.getPositionX(),
+					this.enemyShipSpecial.getPositionY(), playerNumber);
+
+		enemyShipFormation.draw(playerNumber);
+
+		for (ItemBox itemBox : this.itemBoxes)
+			drawManager.drawEntity(itemBox, itemBox.getPositionX(), itemBox.getPositionY(), playerNumber);
+
+		for (Barrier barrier : this.barriers)
+			drawManager.drawEntity(barrier, barrier.getPositionX(), barrier.getPositionY(), playerNumber);
+
+		for (Bullet bullet : this.bullets)
+			drawManager.drawEntity(bullet, bullet.getPositionX(),
+					bullet.getPositionY(), playerNumber);
+
+		// Interface.
+		drawManager.drawScore(this, this.score, playerNumber);
+		drawManager.drawElapsedTime(this, this.elapsedTime, playerNumber);
+		drawManager.drawAlertMessage(this, this.alertMessage, playerNumber);
+		drawManager.drawLives(this, this.lives, this.shipType, playerNumber);
+		drawManager.drawLevel(this, this.level, playerNumber);
+		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1, playerNumber);
+		drawManager.drawReloadTimer(this,this.ship,ship.getRemainingReloadTime(), playerNumber);
+		drawManager.drawCombo(this,this.combo, playerNumber);
+
+		// Show GameOver if one player ends first
+		if (this.levelFinished && this.screenFinishedCooldown.checkFinished() && this.lives <= 0) {
+			drawManager.drawInGameOver(this, this.height, playerNumber);
+			drawManager.drawHorizontalLine(this, this.height / 2 - this.height
+					/ 12, playerNumber);
+			drawManager.drawHorizontalLine(this, this.height / 2 + this.height
+					/ 12, playerNumber);
+		}
+
+		// Countdown to game start.
+		if (!this.inputDelay.checkFinished()) {
+			int countdown = (int) ((INPUT_DELAY - (System.currentTimeMillis() - this.gameStartTime)) / 1000);
+			drawManager.drawCountDown(this, this.level, countdown,
+					this.bonusLife, playerNumber);
+			drawManager.drawHorizontalLine(this, this.height / 2 - this.height
+					/ 12, playerNumber);
+			drawManager.drawHorizontalLine(this, this.height / 2 + this.height
+					/ 12, playerNumber);
+
+			//Intermediate aggregation
+			if (this.level > 1){
+				if (countdown == 0) {
+					//Reset mac combo and edit temporary values
+					this.lapTime = this.elapsedTime;
+					this.tempScore = this.score;
+					this.maxCombo = 0;
+				} else {
+					// Don't show it just before the game starts, i.e. when the countdown is zero.
+					drawManager.interAggre(this, this.level - 1, this.maxCombo, this.elapsedTime, this.lapTime, this.score, this.tempScore, playerNumber);
+				}
+			}
+		}
+
+		//add drawRecord method for drawing
+		drawManager.drawRecord(highScores,this, playerNumber);
+
+		// Blocker drawing part
+		if (!blockers.isEmpty()) {
+			for (Blocker blocker : blockers) {
+				drawManager.drawRotatedEntity(blocker, blocker.getPositionX(), blocker.getPositionY(), blocker.getAngle(), playerNumber);
+			}
+		}
+
+		drawManager.flushBuffer(this, playerNumber);
+	}
+
+	/**
 	 * Cleans bullets that go off screen.
 	 */
 	private void cleanBullets() {
@@ -560,6 +757,16 @@ public class GameScreen extends Screen {
 			timer.schedule(timerTask, 3000);
 		}
 
+		int topEnemyY = Integer.MAX_VALUE;
+		for (EnemyShip enemyShip : this.enemyShipFormation) {
+			if (enemyShip != null && !enemyShip.isDestroyed() && enemyShip.getPositionY() < topEnemyY) {
+				topEnemyY = enemyShip.getPositionY();
+			}
+		}
+		if (this.enemyShipSpecial != null && !this.enemyShipSpecial.isDestroyed() && this.enemyShipSpecial.getPositionY() < topEnemyY) {
+			topEnemyY = this.enemyShipSpecial.getPositionY();
+		}
+
 		for (Bullet bullet : this.bullets) {
 
 			// Enemy ship's bullets
@@ -567,9 +774,10 @@ public class GameScreen extends Screen {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished && !itemManager.isGhostActive()) {
 					recyclable.add(bullet);
 					if (!this.ship.isDestroyed()) {
-						this.ship.destroy();
+						this.ship.destroy(balance);
 						lvdamage();
 						this.logger.info("Hit on player ship, " + this.lives
+
 								+ " lives remaining.");
 					}
 				}
@@ -580,7 +788,7 @@ public class GameScreen extends Screen {
 						Barrier barrier = barrierIterator.next();
 						if (checkCollision(bullet, barrier)) {
 							recyclable.add(bullet);
-							barrier.reduceHealth();
+							barrier.reduceHealth(balance);
 							if (barrier.isDestroyed()) {
 								barrierIterator.remove();
 							}
@@ -593,21 +801,19 @@ public class GameScreen extends Screen {
 					if (enemyShip != null && !enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
 						// Decide whether to destroy according to physical strength
-						this.enemyShipFormation.HealthManageDestroy(enemyShip);
+						this.enemyShipFormation.HealthManageDestroy(enemyShip, balance);
 						// If the enemy doesn't die, the combo increases;
 						// if the enemy dies, both the combo and score increase.
-						if (combo >= 5)
-							this.score += this.enemyShipFormation.getPoint() * (combo / 5 + 1);
-						else
-							this.score += this.enemyShipFormation.getPoint();
+						this.score += Score.comboScore(this.enemyShipFormation.getPoint(), this.combo);
 						this.shipsDestroyed += this.enemyShipFormation.getDistroyedship();
 						this.combo++;
+						if (this.combo > this.maxCombo) this.maxCombo = this.combo;
 						timer.cancel();
 						isExecuted = false;
 						recyclable.add(bullet);
 
 						if (itemManager.dropItem()) {
-							this.itemBoxes.add(new ItemBox(enemyShip.getPositionX() + 6, enemyShip.getPositionY() + 1));
+							this.itemBoxes.add(new ItemBox(enemyShip.getPositionX() + 6, enemyShip.getPositionY() + 1, balance));
 							logger.info("Item box dropped");
 						}
 					}
@@ -615,18 +821,21 @@ public class GameScreen extends Screen {
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
-					if (combo >= 5)
-						this.score += enemyShipSpecial.getPointValue() * (combo / 5 + 1);
-					else
-						this.score += enemyShipSpecial.getPointValue();
+					this.score += Score.comboScore(this.enemyShipSpecial.getPointValue(), this.combo);
 					this.shipsDestroyed++;
 					this.combo++;
-					this.enemyShipSpecial.destroy();
+					if (this.combo > this.maxCombo) this.maxCombo = this.combo;
+					this.enemyShipSpecial.destroy(balance);
 					this.enemyShipSpecialExplosionCooldown.reset();
 					timer.cancel();
 					isExecuted = false;
 
 					recyclable.add(bullet);
+				}
+
+				if (this.itemManager.getShotNum() == 1 && bullet.getPositionY() < topEnemyY) {
+					this.combo = 0;
+					isExecuted = true;
 				}
 
 				Iterator<ItemBox> itemBoxIterator = this.itemBoxes.iterator();
@@ -648,7 +857,7 @@ public class GameScreen extends Screen {
 				for (Block block : this.block) {
 					if (checkCollision(bullet, block)) {
 						recyclable.add(bullet);
-                        soundManager.playSound(Sound.BULLET_BLOCKING);
+                        soundManager.playSound(Sound.BULLET_BLOCKING, balance);
 						break;
 					}
 				}
@@ -705,9 +914,20 @@ public class GameScreen extends Screen {
 	 */
 	public final GameState getGameState() {
 		return new GameState(this.level, this.score, this.shipType, this.lives,
-				this.bulletsShot, this.shipsDestroyed, this.elapsedTime, this.alertMessage, 0);
+				this.bulletsShot, this.shipsDestroyed, this.elapsedTime, this.alertMessage, 0, this.maxCombo, this.lapTime, this.tempScore);
 	}
 
+
+	/**
+	 * Start the action for two player mode
+	 *
+	 * @return Current game state.
+	 */
+	@Override
+	public final GameState call() {
+		run();
+		return getGameState();
+	}
 	//Enemy bullet damage increases depending on stage level
 	public void lvdamage(){
 		for(int i=0; i<=level/3;i++){
