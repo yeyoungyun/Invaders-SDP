@@ -135,7 +135,6 @@ public class SoundManager {
             clipPool.add(clip);
         }
         soundPools.put(sound, clipPool);
-        //soundClips.put(sound, clipPool.get(0));
 
         AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
         Clip clip = AudioSystem.getClip();
