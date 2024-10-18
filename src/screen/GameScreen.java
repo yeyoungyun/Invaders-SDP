@@ -348,9 +348,15 @@ public class GameScreen extends Screen implements Callable<GameState> {
 								this.bulletsShot += this.itemManager.getShotNum();
 						}
 						break;
-					default:
+					case 0:
 						if (player1Attacking) {
 							if (this.ship.shoot(this.bullets, this.itemManager.getShotNum(), -1.0f)) // Player 1 attack
+								this.bulletsShot += this.itemManager.getShotNum();
+						}
+						break;
+					default: //playerNumber = -1
+						if (player1Attacking) {
+							if (this.ship.shoot(this.bullets, this.itemManager.getShotNum(), 0.0f)) // Player 1 attack
 								this.bulletsShot += this.itemManager.getShotNum();
 						}
 						break;
@@ -392,10 +398,16 @@ public class GameScreen extends Screen implements Callable<GameState> {
 						- this.ship.getSpeed() < 1;
 
 				if (moveRight && !isRightBorder) {
-					this.ship.moveRight(balance);
+					if (playerNumber == -1)
+						this.ship.moveRight();
+					else
+						this.ship.moveRight(balance);
 				}
 				if (moveLeft && !isLeftBorder) {
-					this.ship.moveLeft(balance);
+					if (playerNumber == -1)
+						this.ship.moveLeft();
+					else
+						this.ship.moveLeft(balance);
 				}
 				for(int i = 0; i < web.size(); i++) {
 					//escape Spider Web
