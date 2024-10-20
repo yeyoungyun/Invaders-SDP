@@ -242,14 +242,15 @@ public class GameScreen extends Screen implements Callable<GameState> {
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings, this.gameState);
 		enemyShipFormation.attach(this);
         // Appears each 10-30 seconds.
-        this.ship = ShipFactory.create(this.shipType, this.width / 2, this.height - 70);
+        this.ship = ShipFactory.create(this.shipType, this.width / 2, this.height - 30);
+		logger.info("Player ship created " + this.shipType + " at " + this.ship.getPositionX() + ", " + this.ship.getPositionY());
         ship.applyItem(wallet);
 		//Create random Spider Web.
 		int web_count = 1 + level / 3;
 		web = new ArrayList<>();
 		for(int i = 0; i < web_count; i++) {
 			double randomValue = Math.random();
-			this.web.add(new Web((int) Math.max(0, randomValue * width - 12 * 2), this.height - 70));
+			this.web.add(new Web((int) Math.max(0, randomValue * width - 12 * 2), this.height - 30));
 			this.logger.info("Spider web creation location : " + web.get(i).getPositionX());
 		}
 		//Create random Block.
@@ -288,8 +289,7 @@ public class GameScreen extends Screen implements Callable<GameState> {
 		this.bullets = new HashSet<>();
 		this.barriers = new HashSet<>();
         this.itemBoxes = new HashSet<>();
-		this.itemManager = new ItemManager(this.ship, this.enemyShipFormation, this.barriers,
-				balance);
+		this.itemManager = new ItemManager(this.ship, this.enemyShipFormation, this.barriers, this.height, this.width, this.balance);
 
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
@@ -792,9 +792,7 @@ public class GameScreen extends Screen implements Callable<GameState> {
 					if (!this.ship.isDestroyed()) {
 						this.ship.destroy(balance);
 						lvdamage();
-						this.logger.info("Hit on player ship, " + this.lives
-
-								+ " lives remaining.");
+						this.logger.info("Hit on player ship, " + this.lives + " lives remaining.");
 					}
 				}
 
