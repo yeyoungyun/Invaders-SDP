@@ -22,6 +22,8 @@ public class SoundManager {
     private boolean soundEnabled;
     /** Value of current volume */
     private static int currentVolume = 10;
+    private static int currentBgmVolume = 10;
+    private static int currentSfxVolume = 10;
     /** Maximum and minimum values of volume */
     private final float MIN_VOL = -80.0f;
     private final float MAX_VOL = 6.0f;
@@ -175,7 +177,8 @@ public class SoundManager {
     /**
      * @return current volume
      * */
-    public int getVolume() { return currentVolume; }
+    public int getBgmVolume() { return currentBgmVolume; }
+    public int getSfxVolume() { return currentSfxVolume; }
 
     /**
      * @return current playing BGM
