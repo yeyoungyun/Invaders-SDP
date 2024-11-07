@@ -3,6 +3,8 @@ package screen;
 import engine.Core;
 import engine.GameSettings;
 import engine.GameState;
+import engine.SoundManager;
+import engine.Sound;
 import entity.Wallet;
 
 import java.util.concurrent.ExecutorService;
@@ -26,12 +28,12 @@ public class TwoPlayerScreen extends Screen {
     private final Future<GameState>[] players = new Future[2];
 
     /** Player game finished flags **/
-    private final boolean[] gameFinished = new boolean[2];
+    private static final boolean[] gameFinished = new boolean[2];
 
     /** Player 1's number**/
-    private final int PLAYER1_NUMBER = 0;
+    private static final int PLAYER1_NUMBER = 0;
     /** Player 2's number**/
-    private final int PLAYER2_NUMBER = 1;
+    private static final int PLAYER2_NUMBER = 1;
 
     /**
      * Constructor, establishes the properties of the screen.
@@ -72,6 +74,7 @@ public class TwoPlayerScreen extends Screen {
      */
     public int run(){
         try {
+            SoundManager.getInstance().loopSound(Sound.BGM);
             runGameScreen(PLAYER1_NUMBER);
             runGameScreen(PLAYER2_NUMBER);
         }
@@ -112,6 +115,7 @@ public class TwoPlayerScreen extends Screen {
             if (gameFinished[PLAYER1_NUMBER] && gameFinished[PLAYER2_NUMBER]) {
                 isRunning = false;
                 executor.shutdown();
+                SoundManager.getInstance().stopSound(Sound.BGM);
             }
 
             draw();
@@ -153,4 +157,10 @@ public class TwoPlayerScreen extends Screen {
     public int getWinnerNumber() {
         return ((gameStates[PLAYER1_NUMBER].getScore() >= gameStates[PLAYER2_NUMBER].getScore()) ? PLAYER1_NUMBER : PLAYER2_NUMBER) + 1;
     }
+
+    public static boolean isSinglePlayerActive() {
+        return (gameFinished[PLAYER1_NUMBER] && !gameFinished[PLAYER2_NUMBER]) ||
+                (!gameFinished[PLAYER1_NUMBER] && gameFinished[PLAYER2_NUMBER]);
+    }
+
 }
