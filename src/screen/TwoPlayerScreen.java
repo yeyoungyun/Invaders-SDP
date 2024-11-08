@@ -36,13 +36,13 @@ public class TwoPlayerScreen extends Screen {
     /** Method to handle waiting until both players have cleared the level or one has lost. **/
     private synchronized void checkLevelCompletion() {
         if (gameFinished[PLAYER1_NUMBER] && gameFinished[PLAYER2_NUMBER]) {
-            // 모든 플레이어가 완료되었으면 잠금을 해제하고 다음 레벨로 이동 준비
+
             levelProgressionLocked[PLAYER1_NUMBER] = false;
             levelProgressionLocked[PLAYER2_NUMBER] = false;
-            // 다음 레벨로 이동을 위해 각 플레이어의 gameFinished 상태 초기화
+
             gameFinished[PLAYER1_NUMBER] = false;
             gameFinished[PLAYER2_NUMBER] = false;
-            // 각 플레이어의 다음 레벨로 이동
+
             gameStates[PLAYER1_NUMBER] = new GameState(gameStates[PLAYER1_NUMBER], gameStates[PLAYER1_NUMBER].getLevel() + 1);
             gameStates[PLAYER2_NUMBER] = new GameState(gameStates[PLAYER2_NUMBER], gameStates[PLAYER2_NUMBER].getLevel() + 1);
 
@@ -124,10 +124,9 @@ public class TwoPlayerScreen extends Screen {
     protected final void update() {
         try {
             updatePlayerStatus();
-            checkLevelCompletion();  // 두 플레이어의 상태에 따라 레벨 이동 확인
+            checkLevelCompletion();
 
-            if (gameRunning) {  // 게임이 실행 중일 때만 업데이트 수행
-                // 각 플레이어의 상태에 따라 개별적으로 잠금 확인 및 완료 처리
+            if (gameRunning) {
                 if (!levelProgressionLocked[PLAYER1_NUMBER] && players[PLAYER1_NUMBER].isDone()) {
                     gameFinished[PLAYER1_NUMBER] = true;
                 }
@@ -190,7 +189,7 @@ public class TwoPlayerScreen extends Screen {
         while (gameRunning) {
             update();
             try {
-                Thread.sleep(60);  // 간단한 대기 시간을 추가하여 과부하 방지
+                Thread.sleep(60);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
