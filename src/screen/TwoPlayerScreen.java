@@ -30,6 +30,27 @@ public class TwoPlayerScreen extends Screen {
     /** Player game finished flags **/
     private static final boolean[] gameFinished = new boolean[2];
 
+    private boolean[] levelProgressionLocked = new boolean[2];
+    private boolean gameRunning = true;
+
+    /** Method to handle waiting until both players have cleared the level or one has lost. **/
+    private synchronized void checkLevelCompletion() {
+        if (gameFinished[PLAYER1_NUMBER] && gameFinished[PLAYER2_NUMBER]) {
+            // 모든 플레이어가 완료되었으면 잠금을 해제하고 다음 레벨로 이동 준비
+            levelProgressionLocked[PLAYER1_NUMBER] = false;
+            levelProgressionLocked[PLAYER2_NUMBER] = false;
+            // 다음 레벨로 이동을 위해 각 플레이어의 gameFinished 상태 초기화
+            gameFinished[PLAYER1_NUMBER] = false;
+            gameFinished[PLAYER2_NUMBER] = false;
+            // 각 플레이어의 다음 레벨로 이동
+            gameStates[PLAYER1_NUMBER] = new GameState(gameStates[PLAYER1_NUMBER], gameStates[PLAYER1_NUMBER].getLevel() + 1);
+            gameStates[PLAYER2_NUMBER] = new GameState(gameStates[PLAYER2_NUMBER], gameStates[PLAYER2_NUMBER].getLevel() + 1);
+
+            runGameScreen(PLAYER1_NUMBER);
+            runGameScreen(PLAYER2_NUMBER);
+        }
+    }
+
     /** Player 1's number**/
     private static final int PLAYER1_NUMBER = 0;
     /** Player 2's number**/
@@ -83,6 +104,7 @@ public class TwoPlayerScreen extends Screen {
             e.printStackTrace();
         }
         super.run();
+        runGameLoop();
         return returnCode;
     }
 
@@ -101,24 +123,25 @@ public class TwoPlayerScreen extends Screen {
      */
     protected final void update() {
         try {
-            if (players[PLAYER1_NUMBER].isDone()) {
-                gameStates[PLAYER1_NUMBER] = players[PLAYER1_NUMBER].get();
-                gameStates[PLAYER1_NUMBER] = new GameState(gameStates[PLAYER1_NUMBER], gameStates[PLAYER1_NUMBER].getLevel() + 1);
-                runGameScreen(PLAYER1_NUMBER);
-            }
-            if (players[PLAYER2_NUMBER].isDone()) {
-                gameStates[PLAYER2_NUMBER] = players[PLAYER2_NUMBER].get();
-                gameStates[PLAYER2_NUMBER] = new GameState(gameStates[PLAYER2_NUMBER], gameStates[PLAYER2_NUMBER].getLevel() + 1);
-                runGameScreen(PLAYER2_NUMBER);
-            }
+            updatePlayerStatus();
+            checkLevelCompletion();  // 두 플레이어의 상태에 따라 레벨 이동 확인
 
-            if (gameFinished[PLAYER1_NUMBER] && gameFinished[PLAYER2_NUMBER]) {
-                isRunning = false;
+            if (gameRunning) {  // 게임이 실행 중일 때만 업데이트 수행
+                // 각 플레이어의 상태에 따라 개별적으로 잠금 확인 및 완료 처리
+                if (!levelProgressionLocked[PLAYER1_NUMBER] && players[PLAYER1_NUMBER].isDone()) {
+                    gameFinished[PLAYER1_NUMBER] = true;
+                }
+
+                if (!levelProgressionLocked[PLAYER2_NUMBER] && players[PLAYER2_NUMBER].isDone()) {
+                    gameFinished[PLAYER2_NUMBER] = true;
+                }
+
+                draw();
+            } else {
+                // 두 플레이어가 모두 완료된 경우, 리소스 정리 및 사운드 중지
                 executor.shutdown();
                 SoundManager.getInstance().stopSound(Sound.BGM);
             }
-
-            draw();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,12 +158,12 @@ public class TwoPlayerScreen extends Screen {
                     && gameState.getLivesRemaining() < Core.MAX_LIVES;
             logger.info("difficulty is " + Core.getLevelSetting());
             gameSettings[playerNumber] = gameSettings[playerNumber].LevelSettings(
-                gameSettings[playerNumber].getFormationWidth(),
-                gameSettings[playerNumber].getFormationHeight(),
-                gameSettings[playerNumber].getBaseSpeed(),
-                gameSettings[playerNumber].getShootingFrecuency(),
-                gameState.getLevel(),
-                Core.getLevelSetting()
+                    gameSettings[playerNumber].getFormationWidth(),
+                    gameSettings[playerNumber].getFormationHeight(),
+                    gameSettings[playerNumber].getBaseSpeed(),
+                    gameSettings[playerNumber].getShootingFrecuency(),
+                    gameState.getLevel(),
+                    Core.getLevelSetting()
             );
             GameScreen gameScreen = new GameScreen(gameState, gameSettings[playerNumber],
                     bonusLife, width / 2, height, fps / 2, wallet, playerNumber);
@@ -163,4 +186,25 @@ public class TwoPlayerScreen extends Screen {
                 (!gameFinished[PLAYER1_NUMBER] && gameFinished[PLAYER2_NUMBER]);
     }
 
+    public void runGameLoop() {
+        while (gameRunning) {
+            update();
+            try {
+                Thread.sleep(60);  // 간단한 대기 시간을 추가하여 과부하 방지
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void updatePlayerStatus() {
+        if (players[PLAYER1_NUMBER] != null && players[PLAYER1_NUMBER].isDone()) {
+            gameFinished[PLAYER1_NUMBER] = true;
+            checkLevelCompletion();
+        }
+        if (players[PLAYER2_NUMBER] != null && players[PLAYER2_NUMBER].isDone()) {
+            gameFinished[PLAYER2_NUMBER] = true;
+            checkLevelCompletion();
+        }
+    }
 }
