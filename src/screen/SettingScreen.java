@@ -23,7 +23,7 @@ public class SettingScreen extends Screen {
     private static final int COOLDOWN_TIME = 200;
 
     /** Menu item list */
-    private String[] menuItems = { "BGM Sound", "Ending Credit" , "Ship Selection", "SFX Sound"};
+    private String[] menuItems = { "BGM Sound", "SFX Sound", "Ending Credit" , "Ship Selection"};
     /** Default selected menu item */
     private int selectedItem = 0;
     /** Default volume value */
@@ -84,7 +84,7 @@ public class SettingScreen extends Screen {
                 }
             }
 
-            if (selectedItem == 3) {
+            if (selectedItem == 1) {
                 if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
                     sfxVolumeLevel = Math.max(0, sfxVolumeLevel - VOLUME_ADJUST_STEP);
                     this.selectionCooldown.reset();
@@ -98,7 +98,7 @@ public class SettingScreen extends Screen {
                 }
             }
 
-            if(selectedItem == 2){
+            if(selectedItem == 3){
                 if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
                         this.currentShip = Math.max(0 , currentShip - 1);
                     Core.BASE_SHIP = Ship.ShipType.values()[currentShip];
@@ -120,7 +120,7 @@ public class SettingScreen extends Screen {
                 soundManager.playSound(Sound.MENU_MOVE);
             }
 
-            if (inputManager.isKeyDown(KeyEvent.VK_SPACE) && selectedItem == 1) {
+            if (inputManager.isKeyDown(KeyEvent.VK_SPACE) && selectedItem == 2) {
                 this.returnCode = 7;
                 this.isRunning = false;
                 soundManager.playSound(Sound.MENU_CLICK);
@@ -156,19 +156,19 @@ public class SettingScreen extends Screen {
         int bgmFilledWidth = (bgmVolumeLevel * VOLUME_BAR_WIDTH) / 100;
         int sfxFilledWidth = (sfxVolumeLevel * VOLUME_BAR_WIDTH) / 100;
         boolean isBgmSelected = (selectedItem == 0);
-        boolean isShipChoiceSelected = (selectedItem == 2);
-        boolean isSfxSelected = (selectedItem == 3);
+        boolean isSfxSelected = (selectedItem == 1);
+        boolean isShipChoiceSelected = (selectedItem == 3);
 
 
         drawManager.drawVolumeBar(this, this.getWidth() / 2 - VOLUME_BAR_WIDTH / 2, this.getHeight() / 3 + VOLUME_BAR_GAP, VOLUME_BAR_WIDTH, bgmFilledWidth, isBgmSelected);
-        drawManager.drawVolumeBar(this, this.getWidth() / 2 - VOLUME_BAR_WIDTH / 2, this.getHeight() / 3 + VOLUME_BAR_GAP, VOLUME_BAR_WIDTH, sfxFilledWidth, isSfxSelected);
-
         drawManager.drawVolumePercentage(this, this.getWidth() / 2, this.getHeight() / 3 + VOLUME_BAR_GAP + VOLUME_PERCENTAGE_GAP, bgmVolumeLevel, isBgmSelected);
-        drawManager.drawVolumePercentage(this, this.getWidth() / 2, this.getHeight() / 3 + VOLUME_BAR_GAP + VOLUME_PERCENTAGE_GAP, sfxVolumeLevel, isSfxSelected);
+
+        drawManager.drawVolumeBar(this, this.getWidth() / 2 - VOLUME_BAR_WIDTH / 2, this.getHeight() / 2 + 20 + VOLUME_BAR_GAP, VOLUME_BAR_WIDTH, sfxFilledWidth, isSfxSelected);
+        drawManager.drawVolumePercentage(this, this.getWidth() / 2, this.getHeight() / 2 + 20 + VOLUME_BAR_GAP + VOLUME_PERCENTAGE_GAP, sfxVolumeLevel, isSfxSelected);
 
         int NumberOfShips = Ship.ShipType.values().length;
         for (int j = 0; j < NumberOfShips; j++){
-            drawManager.drawShipBoxes(this, this.getWidth() / 2 - 30*NumberOfShips, this.getHeight() - 150, isShipChoiceSelected, j, j==this.currentShip);
+            drawManager.drawShipBoxes(this, this.getWidth() / 2 - 30 * NumberOfShips, this.getHeight() - 150, isShipChoiceSelected, j, j == this.currentShip);
         }
 
         drawManager.completeDrawing(this);
