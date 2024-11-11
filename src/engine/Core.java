@@ -44,7 +44,7 @@ public final class Core {
 	/** Logger handler for printing to console. */
 	private static ConsoleHandler consoleHandler;
 	/** Initialize singleton instance of SoundManager and return that */
-	private static final SoundManager soundManager = SoundManager.getInstance();
+	private static SoundManager soundManager;
 
 	private static long startTime, endTime;
 
@@ -85,6 +85,8 @@ public final class Core {
 
 		AchievementManager achievementManager;
 		Wallet wallet = Wallet.getWallet();
+
+		SoundManager soundManager = SoundManager.getInstance();
 
 		int returnCode = 1;
 		do {

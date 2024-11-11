@@ -77,14 +77,12 @@ public class SettingScreen extends Screen {
                 if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
                     bgmVolumeLevel = Math.max(0, bgmVolumeLevel - VOLUME_ADJUST_STEP);
                     this.selectionCooldown.reset();
-                    currentBgmVolume = bgmVolumeLevel;
-                    soundManager.volumeDown(currentBgmVolume);
+                    soundManager.volumeDown(true);
                     soundManager.playSound(Sound.MENU_MOVE);
                 } else if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)) {
                     bgmVolumeLevel = Math.min(100, bgmVolumeLevel + VOLUME_ADJUST_STEP);
                     this.selectionCooldown.reset();
-                    currentBgmVolume = bgmVolumeLevel;
-                    soundManager.volumeUp(currentBgmVolume);
+                    soundManager.volumeUp(true);
                     soundManager.playSound(Sound.MENU_MOVE);
                 }
             }
@@ -93,14 +91,12 @@ public class SettingScreen extends Screen {
                 if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
                     sfxVolumeLevel = Math.max(0, sfxVolumeLevel - VOLUME_ADJUST_STEP);
                     this.selectionCooldown.reset();
-                    currentSfxVolume = sfxVolumeLevel;
-                    soundManager.volumeDown(currentSfxVolume);
+                    soundManager.volumeDown(false);
                     soundManager.playSound(Sound.MENU_MOVE);
                 } else if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)) {
                     sfxVolumeLevel = Math.min(100, sfxVolumeLevel + VOLUME_ADJUST_STEP);
                     this.selectionCooldown.reset();
-                    currentSfxVolume = sfxVolumeLevel;
-                    soundManager.volumeUp(currentSfxVolume);
+                    soundManager.volumeUp(false);
                     soundManager.playSound(Sound.MENU_MOVE);
                 }
             }
