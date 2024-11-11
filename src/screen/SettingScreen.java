@@ -7,6 +7,9 @@ import engine.Sound;
 import engine.SoundManager;
 import entity.Ship;
 
+import static engine.SoundManager.currentBgmVolume;
+import static engine.SoundManager.currentSfxVolume;
+
 public class SettingScreen extends Screen {
 
     /** Width of Volume bar */
@@ -74,12 +77,14 @@ public class SettingScreen extends Screen {
                 if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
                     bgmVolumeLevel = Math.max(0, bgmVolumeLevel - VOLUME_ADJUST_STEP);
                     this.selectionCooldown.reset();
-                    soundManager.volumeDown();
+                    currentBgmVolume = bgmVolumeLevel;
+                    soundManager.volumeDown(currentBgmVolume);
                     soundManager.playSound(Sound.MENU_MOVE);
                 } else if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)) {
                     bgmVolumeLevel = Math.min(100, bgmVolumeLevel + VOLUME_ADJUST_STEP);
                     this.selectionCooldown.reset();
-                    soundManager.volumeUp();
+                    currentBgmVolume = bgmVolumeLevel;
+                    soundManager.volumeUp(currentBgmVolume);
                     soundManager.playSound(Sound.MENU_MOVE);
                 }
             }
@@ -88,12 +93,14 @@ public class SettingScreen extends Screen {
                 if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
                     sfxVolumeLevel = Math.max(0, sfxVolumeLevel - VOLUME_ADJUST_STEP);
                     this.selectionCooldown.reset();
-                    soundManager.volumeDown();
+                    currentSfxVolume = sfxVolumeLevel;
+                    soundManager.volumeDown(currentSfxVolume);
                     soundManager.playSound(Sound.MENU_MOVE);
                 } else if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)) {
                     sfxVolumeLevel = Math.min(100, sfxVolumeLevel + VOLUME_ADJUST_STEP);
                     this.selectionCooldown.reset();
-                    soundManager.volumeUp();
+                    currentSfxVolume = sfxVolumeLevel;
+                    soundManager.volumeUp(currentSfxVolume);
                     soundManager.playSound(Sound.MENU_MOVE);
                 }
             }

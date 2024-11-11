@@ -21,9 +21,8 @@ public class SoundManager {
     /** Sound manager activation flag */
     private boolean soundEnabled;
     /** Value of current volume */
-    private static int currentVolume = 10;
-    private static int currentBgmVolume = 10;
-    private static int currentSfxVolume = 10;
+    public static int currentBgmVolume = 10;
+    public static int currentSfxVolume = 10;
     /** Maximum and minimum values of volume */
     private final float MIN_VOL = -80.0f;
     private final float MAX_VOL = 6.0f;
@@ -90,7 +89,8 @@ public class SoundManager {
             loadSound(Sound.BGM_LV6, "res/sound/BGM/Lv6.wav");
             loadSound(Sound.BGM_LV7, "res/sound/BGM/Lv7.wav");
 
-            setVolume(currentVolume);
+            setVolume(currentBgmVolume);
+            setVolume(currentSfxVolume);
             logger.info("Finished loading all sounds.");
 
         } catch (IOException e) {
@@ -188,7 +188,7 @@ public class SoundManager {
     /**
      * Increases the volume of all sounds by 1.
      */
-    public void volumeUp() {
+    public void volumeUp(int currentVolume) {
         if (soundEnabled && (currentVolume < 10)) {
             currentVolume++;
             setVolume(currentVolume);
@@ -198,7 +198,7 @@ public class SoundManager {
     /**
      * Decreases the volume of all sounds by 1.
      */
-    public void volumeDown() {
+    public void volumeDown(int currentVolume) {
         if (soundEnabled && (currentVolume > 0)) {
             currentVolume--;
             setVolume(currentVolume);
