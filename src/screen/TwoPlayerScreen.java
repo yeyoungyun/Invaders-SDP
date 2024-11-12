@@ -135,11 +135,11 @@ public class TwoPlayerScreen extends Screen {
                     gameFinished[PLAYER2_NUMBER] = true;
                 }
 
-                draw();
             } else {
                 executor.shutdown();
                 SoundManager.getInstance().stopSound(Sound.BGM_LV1);
             }
+            draw();
         } catch (Exception e) {
             e.printStackTrace();
         }
