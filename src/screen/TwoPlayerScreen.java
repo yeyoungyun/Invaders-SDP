@@ -95,7 +95,7 @@ public class TwoPlayerScreen extends Screen {
      */
     public int run(){
         try {
-            SoundManager.getInstance().loopSound(Sound.BGM);
+            SoundManager.getInstance().loopSound(Sound.BGM_LV1);
             runGameScreen(PLAYER1_NUMBER);
             runGameScreen(PLAYER2_NUMBER);
         }
@@ -137,9 +137,8 @@ public class TwoPlayerScreen extends Screen {
 
                 draw();
             } else {
-                // 두 플레이어가 모두 완료된 경우, 리소스 정리 및 사운드 중지
                 executor.shutdown();
-                SoundManager.getInstance().stopSound(Sound.BGM);
+                SoundManager.getInstance().stopSound(Sound.BGM_LV1);
             }
         } catch (Exception e) {
             e.printStackTrace();

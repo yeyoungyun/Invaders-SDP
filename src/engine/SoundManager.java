@@ -89,13 +89,6 @@ public class SoundManager {
             loadSound(Sound.BGM_LV5, "res/sound/BGM/Lv5.wav");
             loadSound(Sound.BGM_LV6, "res/sound/BGM/Lv6.wav");
             loadSound(Sound.BGM_LV7, "res/sound/BGM/Lv7.wav");
-            loadSound(Sound.BGM, "res/sound/BGM/Lv1.wav");
-            //loadSound(Sound.BGM, "res/sound/BGM/Lv2.wav");
-            //loadSound(Sound.BGM, "res/sound/BGM/Lv3.wav");
-            //loadSound(Sound.BGM, "res/sound/BGM/Lv4.wav");
-            //loadSound(Sound.BGM, "res/sound/BGM/Lv5.wav");
-            //loadSound(Sound.BGM, "res/sound/BGM/Lv6.wav");
-            //loadSound(Sound.BGM, "res/sound/BGM/Lv7.wav");
 
             setVolume(currentVolume);
             logger.info("Finished loading all sounds.");
@@ -289,7 +282,7 @@ public class SoundManager {
      */
     public void stopSound(Sound sound) {
         if (soundEnabled) {
-            if (sound == Sound.BGM && TwoPlayerScreen.isSinglePlayerActive()) {
+            if (sound == Sound.BGM_LV1 && TwoPlayerScreen.isSinglePlayerActive()) {
                 return;
             }
             Clip clips = soundClips.get(sound);
