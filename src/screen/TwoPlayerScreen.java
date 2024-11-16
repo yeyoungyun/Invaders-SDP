@@ -33,24 +33,6 @@ public class TwoPlayerScreen extends Screen {
     private boolean[] levelProgressionLocked = new boolean[2];
     private boolean gameRunning = true;
 
-    /** Method to handle waiting until both players have cleared the level or one has lost. **/
-    private synchronized void checkLevelCompletion() {
-        if (gameFinished[PLAYER1_NUMBER] && gameFinished[PLAYER2_NUMBER]) {
-
-            levelProgressionLocked[PLAYER1_NUMBER] = false;
-            levelProgressionLocked[PLAYER2_NUMBER] = false;
-
-            gameFinished[PLAYER1_NUMBER] = false;
-            gameFinished[PLAYER2_NUMBER] = false;
-
-            gameStates[PLAYER1_NUMBER] = new GameState(gameStates[PLAYER1_NUMBER], gameStates[PLAYER1_NUMBER].getLevel() + 1);
-            gameStates[PLAYER2_NUMBER] = new GameState(gameStates[PLAYER2_NUMBER], gameStates[PLAYER2_NUMBER].getLevel() + 1);
-
-            runGameScreen(PLAYER1_NUMBER);
-            runGameScreen(PLAYER2_NUMBER);
-        }
-    }
-
     /** Player 1's number**/
     private static final int PLAYER1_NUMBER = 0;
     /** Player 2's number**/
@@ -108,6 +90,91 @@ public class TwoPlayerScreen extends Screen {
         return returnCode;
     }
 
+    public void runGameLoop() {
+        while (gameRunning) {
+            update();
+            try {
+                Thread.sleep(60);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Updates the elements on screen and checks for events.
+     */
+    protected final void update() {
+        try {
+            // Check for game over before any updates
+            if (checkGameOverForPlayers()) {
+                return; // Stop further updates if game is over
+            }
+            updatePlayerStatus();
+            checkLevelCompletion();
+
+            if (gameRunning) {
+                if (!levelProgressionLocked[PLAYER1_NUMBER] && players[PLAYER1_NUMBER].isDone()) {
+                    gameFinished[PLAYER1_NUMBER] = true;
+                }
+                if (!levelProgressionLocked[PLAYER2_NUMBER] && players[PLAYER2_NUMBER].isDone()) {
+                    gameFinished[PLAYER2_NUMBER] = true;
+                }
+            } else {
+                executor.shutdown();
+                SoundManager.getInstance().stopSound(Sound.BGM_LV1);
+            }
+            draw();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updatePlayerStatus() {
+        if (players[PLAYER1_NUMBER] != null && players[PLAYER1_NUMBER].isDone()) {
+            gameFinished[PLAYER1_NUMBER] = true;
+            checkLevelCompletion();
+        }
+        if (players[PLAYER2_NUMBER] != null && players[PLAYER2_NUMBER].isDone()) {
+            gameFinished[PLAYER2_NUMBER] = true;
+            checkLevelCompletion();
+        }
+    }
+
+    /** Method to handle waiting until both players have cleared the level or one has lost. **/
+    private synchronized void checkLevelCompletion() {
+        if (checkGameOverForPlayers()) {
+            logger.info("Game over detected in checkLevelCompletion.");
+            return; // Stop level progression if game is over
+        }
+
+        if (gameFinished[PLAYER1_NUMBER] && gameFinished[PLAYER2_NUMBER]) {
+            levelProgressionLocked[PLAYER1_NUMBER] = false;
+            levelProgressionLocked[PLAYER2_NUMBER] = false;
+
+            gameFinished[PLAYER1_NUMBER] = false;
+            gameFinished[PLAYER2_NUMBER] = false;
+
+            gameStates[PLAYER1_NUMBER] = new GameState(gameStates[PLAYER1_NUMBER], gameStates[PLAYER1_NUMBER].getLevel() + 1);
+            gameStates[PLAYER2_NUMBER] = new GameState(gameStates[PLAYER2_NUMBER], gameStates[PLAYER2_NUMBER].getLevel() + 1);
+
+            runGameScreen(PLAYER1_NUMBER);
+            runGameScreen(PLAYER2_NUMBER);
+        }
+    }
+
+    private boolean checkGameOverForPlayers() {
+        if (gameStates[PLAYER1_NUMBER].getLivesRemaining() <= 0 && gameStates[PLAYER2_NUMBER].getLivesRemaining() <= 0) {
+            logger.info("Both players are out of lives. Game Over.");
+            drawManager.drawInGameOver(this, this.height, PLAYER1_NUMBER);
+            drawManager.drawInGameOver(this, this.height, PLAYER2_NUMBER);
+            gameRunning = false;
+            executor.shutdown();
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Draws the elements associated with the screen.
      */
@@ -118,32 +185,6 @@ public class TwoPlayerScreen extends Screen {
         drawManager.completeDrawing(this);
     }
 
-    /**
-     * Updates the elements on screen and checks for events.
-     */
-    protected final void update() {
-        try {
-            updatePlayerStatus();
-            checkLevelCompletion();
-
-            if (gameRunning) {
-                if (!levelProgressionLocked[PLAYER1_NUMBER] && players[PLAYER1_NUMBER].isDone()) {
-                    gameFinished[PLAYER1_NUMBER] = true;
-                }
-
-                if (!levelProgressionLocked[PLAYER2_NUMBER] && players[PLAYER2_NUMBER].isDone()) {
-                    gameFinished[PLAYER2_NUMBER] = true;
-                }
-
-            } else {
-                executor.shutdown();
-                SoundManager.getInstance().stopSound(Sound.BGM_LV1);
-            }
-            draw();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     /**
      * Progression logic each games.
      */
@@ -184,25 +225,4 @@ public class TwoPlayerScreen extends Screen {
                 (!gameFinished[PLAYER1_NUMBER] && gameFinished[PLAYER2_NUMBER]);
     }
 
-    public void runGameLoop() {
-        while (gameRunning) {
-            update();
-            try {
-                Thread.sleep(60);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void updatePlayerStatus() {
-        if (players[PLAYER1_NUMBER] != null && players[PLAYER1_NUMBER].isDone()) {
-            gameFinished[PLAYER1_NUMBER] = true;
-            checkLevelCompletion();
-        }
-        if (players[PLAYER2_NUMBER] != null && players[PLAYER2_NUMBER].isDone()) {
-            gameFinished[PLAYER2_NUMBER] = true;
-            checkLevelCompletion();
-        }
-    }
 }
