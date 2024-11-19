@@ -295,7 +295,7 @@ public class GameScreen extends Screen implements Callable<GameState> {
 		this.gameStartTime = System.currentTimeMillis();
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
-		if (soundManager.isSoundPlaying(Sound.BGM_MAIN))
+		if (soundManager.isBGMPlaying(Sound.BGM_MAIN))
 			soundManager.stopSound(Sound.BGM_MAIN);
 		soundManager.playSound(Sound.COUNTDOWN);
 
