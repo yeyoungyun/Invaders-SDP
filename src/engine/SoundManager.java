@@ -119,7 +119,7 @@ public class SoundManager {
      *
      * @param volume Int value of volume (0-10)
      */
-    private void setVolume(int volume, boolean isBGM) {
+    public void setVolume(int volume, boolean isBGM) {
         float newVolume = MIN_VOL + (float)(Math.log(volume + 1) / Math.log(11)) * (MAX_VOL - MIN_VOL);
 
         if (isBGM) {
